@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5009/api/users",
+    //baseUrl: "http://localhost:5009/api/users",
+    baseUrl: "https://api.hakkencity.com/api/users",
     credentials: "include", // garante que todos enviam cookies
   }),
   endpoints: (builder) => ({
