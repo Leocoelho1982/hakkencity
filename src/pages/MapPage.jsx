@@ -79,7 +79,7 @@ export default function MapPage() {
       </MapContainer>
 
       {/* TopBar fixo em cima */}
-      <div className="absolute top-0 left-0 w-full z-50 pointer-events-none">
+      <div className="fixed top-0 left-0 w-full z-50 pointer-events-none">
         <div className="pointer-events-auto">
           <TopBar
             score={score}
@@ -92,7 +92,7 @@ export default function MapPage() {
       </div>
 
       {/* BottomBar sobre o mapa */}
-                <div className="absolute bottom-0 w-full z-50 pointer-events-none">
+                <div className="fixed bottom-0 w-full z-50 pointer-events-none">
                   <div className="pointer-events-auto">
                     <BottomBar user={position}  />
                   </div>
