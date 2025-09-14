@@ -4,7 +4,7 @@ import filterIcon from "../assets/filter.png";
 import mapicon from "../assets/mapicon.png";
 import avatarFallback from "../assets/avatar.jpg"; // fallback se não existir avatar
 
-export default function TopBar({ score, visitedCount, totalPois, avatar }) {
+export default function TopBar({ score, visitedCount, totalPois, avatar, city }) {
   return (
     <div className="bg-[#FFF4D6] p-2 rounded-b-3xl w-full border-b border-b-5 border-b-black/20">
       <div
@@ -73,7 +73,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar }) {
 
       {/* Cidade */}
       <div className="text-center font-title font-regular text-[#5A2C0A] mt-1">
-        Cidade: Aveiro
+        Estás em: {city || "—"}
       </div>
     </div>
   );
