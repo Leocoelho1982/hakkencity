@@ -9,7 +9,7 @@ export default function LoadingScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/map"); 
-    }, 9500);
+    }, 5500);
     return () => clearTimeout(timer);
   }, [navigate]);
 
