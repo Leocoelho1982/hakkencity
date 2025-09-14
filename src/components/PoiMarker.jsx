@@ -1,8 +1,10 @@
-import React, { useMemo } from "react";
-import { Marker, Circle, Popup } from "react-leaflet";
+import React, { useMemo, useState } from "react";
+import { Marker, Circle } from "react-leaflet";
 import L from "leaflet";
 import * as turf from "@turf/turf";
-import coinIcon from "../assets/coin.png";
+import coinIcon from "../assets/coins.png";
+import ampliarIcon from "../assets/bt_ampliar.png"; 
+import iconClose from "../assets/bt_close.png";
 
 // Cria ícone do POI
 function makeIcon(collected) {
@@ -13,7 +15,17 @@ function makeIcon(collected) {
   });
 }
 
+// Função auxiliar para formatar distância
+function formatDistance(meters) {
+  if (meters == null) return "—";
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(2)} km`;
+}
+
 export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }) {
+  const [open, setOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
   // Distância em metros
   const distance = useMemo(() => {
     if (!userPosition) return null;
@@ -23,7 +35,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
   }, [userPosition, poi]);
 
   const isCollected = visited && visited[poi.id];
-
+  const canCollect = !isCollected && distance !== null && distance <= poi.radius;
 
   return (
     <>
@@ -41,32 +53,98 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       <Marker
         position={{ lat: poi.lat, lng: poi.lng }}
         icon={makeIcon(isCollected)}
-      >
-        <Popup>
-          <h3 className="font-bold">{poi.content?.title || poi.name}</h3>
-          {poi.content?.image && (
-            <img
-              src={poi.content.image}
-              alt={poi.name}
-              className="w-40 h-28 object-cover rounded-md mb-2"
-            />
-          )}
-          <p className="text-sm">{poi.content?.text}</p>
+        eventHandlers={{
+          click: () => setOpen(true), // abre modal ao clicar
+        }}
+      />
 
-          {!isCollected && distance <= poi.radius ? (
+      {/* Modal principal */}
+      {open && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-[999]">
+          <div className="bg-gradient-to-b from-[#FFF4D6] to-[#FBCB6D] rounded-2xl p-6 w-80 border-4 border-[#5A2C0A] shadow-lg relative">
+            {/* Botão fechar */}
             <button
-              onClick={() => onCollect(poi)}
-              className="bg-marron-40 text-white px-3 py-1 rounded-lg mt-2 hover:bg-marron-60"
+              onClick={() => setOpen(false)}
+              className="absolute top-2 right-2 text-[#5A2C0A] font-bold text-lg"
             >
-              Recolher +{poi.points} moedas
+              <img src={iconClose} className="h-6 w-6" />
             </button>
-          ) : (
-            <p className="text-xs text-gray-500 mt-2">
-              {isCollected ? "✅ Já recolhido" : "Aproxime-se para recolher"}
+
+            <h3 className="font-bold font-title text-lg mb-3 text-[#5A2C0A]">
+              {poi.content?.title || poi.name}
+            </h3>
+
+            {poi.content?.image && (
+              <div className="relative mb-3">
+                {/* Imagem */}
+                <img
+                  src={poi.content.image}
+                  alt={poi.name}
+                  className="w-full h-40 object-cover rounded-md"
+                />
+
+                {/* Coins + valor */}
+                <div className="absolute top-2 left-2 flex items-center bg-white/80 rounded-full px-2 py-1 shadow">
+                  <img src={coinIcon} alt="coins" className="w-5 h-5 mr-1" />
+                  <span className="font-bold text-[#5A2C0A]">{poi.points}</span>
+                </div>
+
+                {/* Botão ampliar */}
+                <button
+                  onClick={() => setLightboxOpen(true)}
+                  className="absolute top-2 right-2 bg-white/80 rounded-full p-1 shadow hover:scale-105 transition"
+                >
+                  <img src={ampliarIcon} alt="Ampliar" className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            <p className="text-sm text-[#5A2C0A] mb-2">{poi.content?.text}</p>
+
+            {/* Distância */}
+            <p className="text-center text-sm font-semibold text-[#5A2C0A] mb-4">
+              Distância: {formatDistance(distance)}
             </p>
-          )}
-        </Popup>
-      </Marker>
+
+            {canCollect ? (
+              <button
+                onClick={() => {
+                  onCollect(poi);
+                  setOpen(false);
+                }}
+                className="w-full bg-[#E66A4E] text-white py-2 rounded-full font-title font-semibold hover:bg-[#d85d3f] transition"
+              >
+                Recolher +{poi.points} moedas
+              </button>
+            ) : (
+              <p className="text-center text-sm text-gray-600">
+                {isCollected
+                  ? "✅ Já recolhido"
+                  : "Aproxime-se para recolher as moedas"}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox da imagem ampliada */}
+      {lightboxOpen && (
+        <div className="absolute inset-0 px-4 flex items-center justify-center bg-black/80 z-[1000]">
+          <div className="relative w-full max-w-2xl">
+            <button
+              onClick={() => setLightboxOpen(false)}
+              className="absolute top-4 right-4 bg-white/90 rounded-full px-3 py-1 font-bold text-[#5A2C0A] shadow"
+            >
+              <img src={iconClose} className="h-8 w-8" />
+            </button>
+            <img
+              src={poi.content?.image}
+              alt="Ampliado"
+              className="w-full max-h-[80vh] object-contain rounded-lg shadow-xl"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
