@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useSelector } from "react-redux";
-
+import Leaderboard from "../components/Leaderboard";
 import PlayerMarker from "../components/PlayerMarker";
 import PoiMarker from "../components/PoiMarker";
 import TopBar from "../components/TopBar";
@@ -25,6 +25,7 @@ export default function MapPage() {
   const { position, msg } = useGeolocation();
   const { heading } = useHeading();
   const avatar = useSelector((state) => state.user.image);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
 
   const [city, setCity] = useState("—"); // 👈 estado para região/cidade
 
@@ -113,12 +114,26 @@ export default function MapPage() {
             </div>
           </div>
 
-          {/* BottomBar fixo em baixo */}
+
           <div className="fixed bottom-0 w-full z-50 pointer-events-none">
-            <div className="pointer-events-auto">
-              <BottomBar user={position} />
-            </div>
-          </div>
+  <div className="pointer-events-auto">
+    {/* Botão leaderboard acima da BottomBar */}
+    <button
+      onClick={() => setLeaderboardOpen(true)}
+      className="fixed bottom-20 right-4 z-50 bg-[#fff] text-white px-4 py-3 rounded-full shadow-lg hover:bg-[#d85d3f] transition"
+    >
+      🏆
+    </button>
+
+    <BottomBar user={position} />
+  </div>
+</div>
+
+{/* Modal Leaderboard */}
+<Leaderboard 
+  open={leaderboardOpen} 
+  onClose={() => setLeaderboardOpen(false)} 
+/>
         </div>
       </div>
     </div>
