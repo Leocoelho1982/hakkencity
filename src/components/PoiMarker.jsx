@@ -62,12 +62,12 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       {/* Modal principal */}
       {open && (
         <div
-          className="fixed  inset-0 flex items-center justify-center bg-black/60 z-[999]"
-          onClick={() => setOpen(false)} // fecha ao clicar fora
+          className="fixed inset-0 bg-black/60 z-[999] flex justify-center overflow-y-auto touch-none"
+          onClick={() => setOpen(false)}
         >
           <div
-            className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-90 border-4 border-marron-100 shadow-lg relative"
-            onClick={(e) => e.stopPropagation()} // impede fecho ao clicar dentro
+            className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-90 border-4 border-marron-100 shadow-lg relative my-10 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Botão fechar */}
             <button
@@ -137,12 +137,12 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       {/* Lightbox da imagem ampliada */}
       {lightboxOpen && (
         <div
-          className="fixed  inset-0 px-4 flex items-center justify-center bg-black/80 z-[1000]"
-          onClick={() => setLightboxOpen(false)} // fecha ao clicar fora
+          className="fixed inset-0 bg-black/80 z-[1000] flex items-center justify-center overflow-y-auto touch-none"
+          onClick={() => setLightboxOpen(false)}
         >
           <div
-            className="relative w-full max-w-2xl"
-            onClick={(e) => e.stopPropagation()} // impede fecho ao clicar dentro
+            className="relative w-full max-w-2xl mx-auto"
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setLightboxOpen(false)}
