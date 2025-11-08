@@ -47,7 +47,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-90 border-4 border-marron-100 shadow-lg relative my-10 max-h-[90vh] overflow-y-auto"
+            className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-xl m-4 border-4 border-marron-100 shadow-lg relative my-10 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Botão fechar */}
