@@ -26,7 +26,7 @@ export default function BottomBar({ user, map }) {
   };
 
   return (
-    <div className="bg-[#FFF4D6] px-6 rounded-t-3xl w-full border-t-4 border-black/20 flex items-center justify-between">
+    <div className="bg-gold-20 px-6 rounded-t-3xl w-full border-t-4 border-black/20 flex items-center justify-between">
       <button type="button" className="flex flex-col items-center justify-center">
         <img src={changeCoinIcon} alt="Trocar Moedas" className="w-[72px] h-[72px]" />
       </button>

@@ -62,16 +62,16 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       {/* Modal principal */}
       {open && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-[999]">
-          <div className="bg-gradient-to-b from-[#FFF4D6] to-[#FBCB6D] rounded-2xl p-6 w-80 border-4 border-[#5A2C0A] shadow-lg relative">
+          <div className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-90 border-4 border-marron-100 shadow-lg relative">
             {/* Botão fechar */}
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-2 right-2 text-[#5A2C0A] font-bold text-lg"
+              className="absolute top-2 right-2 text-marron-100 font-bold text-lg"
             >
               <img src={iconClose} className="h-6 w-6" />
             </button>
 
-            <h3 className="font-bold font-title text-lg mb-3 text-[#5A2C0A]">
+            <h3 className="font-bold font-title text-lg mb-3 text-marron-100">
               {poi.content?.title || poi.name}
             </h3>
 
@@ -100,10 +100,10 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
               </div>
             )}
 
-            <p className="text-sm text-[#5A2C0A] mb-2">{poi.content?.text}</p>
+            <p className="text-sm text-marron-100 mb-2">{poi.content?.text}</p>
 
             {/* Distância */}
-            <p className="text-center text-sm font-semibold text-[#5A2C0A] mb-4">
+            <p className="text-center text-sm font-semibold text-marron-100 mb-4">
               Distância: {formatDistance(distance)}
             </p>
 
@@ -118,7 +118,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
                 Recolher +{poi.points} moedas
               </button>
             ) : (
-              <p className="text-center text-sm text-gray-600">
+              <p className="text-center text-sm text-azul-60">
                 {isCollected
                   ? "✅ Já recolhido"
                   : "Aproxime-se para recolher as moedas"}
@@ -141,7 +141,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
             <img
               src={poi.content?.image}
               alt="Ampliado"
-              className="w-full max-h-[80vh] object-contain rounded-lg shadow-xl"
+              className="w-full max-h-[80vh] object-contain rounded-3xl shadow-xl"
             />
           </div>
         </div>
