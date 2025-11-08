@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { setUser } from "../features/userSlice";
@@ -16,6 +16,15 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
 
+  // ✅ Verifica se já existe utilizador guardado e restaura automaticamente
+  useEffect(() => {
+    const storedUser = localStorage.getItem("hakkenUser");
+    if (storedUser) {
+      dispatch(setUser(JSON.parse(storedUser)));
+      navigate("/map"); // entra diretamente sem pedir login
+    }
+  }, [dispatch, navigate]);
+
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
@@ -26,8 +35,14 @@ export default function LoginPage() {
 
     try {
       const res = await loginUser(form).unwrap();
+
       // guarda utilizador no Redux
-      dispatch(setUser(res.user || { username: form.username }));
+      const userData = res.user || { username: form.username };
+      dispatch(setUser(userData));
+
+      // ✅ guarda também no localStorage
+      localStorage.setItem("hakkenUser", JSON.stringify(userData));
+
       navigate("/map");
     } catch (err) {
       setError(err?.data?.message || "Credenciais inválidas");
@@ -75,7 +90,9 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {error && <p className="text-vermelho-100 text-sm text-center">{error}</p>}
+          {error && (
+            <p className="text-vermelho-100 text-sm text-center">{error}</p>
+          )}
 
           <button
             type="submit"
