@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useSelector } from "react-redux";
-
+import Leaderboard from "../components/Leaderboard";
 import PlayerMarker from "../components/PlayerMarker";
 import PoiMarker from "../components/PoiMarker";
 import TopBar from "../components/TopBar";
@@ -25,6 +25,7 @@ export default function MapPage() {
   const { position, msg } = useGeolocation();
   const { heading } = useHeading();
   const avatar = useSelector((state) => state.user.image);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
 
   const [city, setCity] = useState("—"); // 👈 estado para região/cidade
 
