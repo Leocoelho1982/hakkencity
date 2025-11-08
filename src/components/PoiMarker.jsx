@@ -62,7 +62,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       {/* Modal principal */}
       {open && (
         <div
-          className="absolute inset-0 flex items-center justify-center bg-black/60 z-[999]"
+          className="fixed  inset-0 flex items-center justify-center bg-black/60 z-[999]"
           onClick={() => setOpen(false)} // fecha ao clicar fora
         >
           <div
@@ -119,7 +119,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
                   onCollect(poi);
                   setOpen(false);
                 }}
-                className="w-full bg-[#E66A4E] text-white py-2 rounded-full font-title font-semibold hover:bg-[#d85d3f] transition"
+                className="w-full bg-[#E66A4E] text-white py-2 rounded-full font-title font-semibold hover:bg-[#d85d3f] transition cursor-pointer"
               >
                 Recolher +{poi.points} moedas
               </button>
@@ -137,7 +137,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       {/* Lightbox da imagem ampliada */}
       {lightboxOpen && (
         <div
-          className="absolute inset-0 px-4 flex items-center justify-center bg-black/80 z-[1000]"
+          className="fixed  inset-0 px-4 flex items-center justify-center bg-black/80 z-[1000]"
           onClick={() => setLightboxOpen(false)} // fecha ao clicar fora
         >
           <div
