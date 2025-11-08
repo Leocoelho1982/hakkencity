@@ -4,7 +4,7 @@ import L from "leaflet";
 import * as turf from "@turf/turf";
 import coinIcon from "../assets/coin.png";
 import coinsIcon from "../assets/coins.png";
-import ampliarIcon from "../assets/bt_ampliar.png"; 
+import ampliarIcon from "../assets/bt_ampliar.png";
 import iconClose from "../assets/bt_close.png";
 
 // Cria ícone do POI
@@ -61,14 +61,20 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
 
       {/* Modal principal */}
       {open && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-[999]">
-          <div className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-90 border-4 border-marron-100 shadow-lg relative">
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-black/60 z-[999]"
+          onClick={() => setOpen(false)} // fecha ao clicar fora
+        >
+          <div
+            className="bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl p-6 w-90 border-4 border-marron-100 shadow-lg relative"
+            onClick={(e) => e.stopPropagation()} // impede fecho ao clicar dentro
+          >
             {/* Botão fechar */}
             <button
               onClick={() => setOpen(false)}
               className="absolute top-2 right-2 text-marron-100 font-bold text-lg"
             >
-              <img src={iconClose} className="h-6 w-6" />
+              <img src={iconClose} className="h-6 w-6" alt="Fechar" />
             </button>
 
             <h3 className="font-bold font-title text-lg mb-3 text-marron-100">
@@ -130,13 +136,19 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
 
       {/* Lightbox da imagem ampliada */}
       {lightboxOpen && (
-        <div className="absolute inset-0 px-4 flex items-center justify-center bg-black/80 z-[1000]">
-          <div className="relative w-full max-w-2xl">
+        <div
+          className="absolute inset-0 px-4 flex items-center justify-center bg-black/80 z-[1000]"
+          onClick={() => setLightboxOpen(false)} // fecha ao clicar fora
+        >
+          <div
+            className="relative w-full max-w-2xl"
+            onClick={(e) => e.stopPropagation()} // impede fecho ao clicar dentro
+          >
             <button
               onClick={() => setLightboxOpen(false)}
               className="absolute top-4 right-4 bg-white/90 rounded-full px-3 py-1 font-bold text-[#5A2C0A] shadow"
             >
-              <img src={iconClose} className="h-8 w-8" />
+              <img src={iconClose} className="h-8 w-8" alt="Fechar" />
             </button>
             <img
               src={poi.content?.image}
