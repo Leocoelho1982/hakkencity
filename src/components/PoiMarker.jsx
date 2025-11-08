@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Marker, Circle } from "react-leaflet";
+import { createPortal } from "react-dom";
 import L from "leaflet";
 import * as turf from "@turf/turf";
 import coinIcon from "../assets/coin.png";
@@ -38,29 +39,9 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
   const isCollected = visited && visited[poi.id];
   const canCollect = !isCollected && distance !== null && distance <= poi.radius;
 
-  return (
-    <>
-      {/* Raio de alcance */}
-      <Circle
-        center={{ lat: poi.lat, lng: poi.lng }}
-        radius={poi.radius}
-        pathOptions={{
-          color: isCollected ? "gray" : "#e68d2f",
-          fillOpacity: 0.15,
-        }}
-      />
-
-      {/* Marcador */}
-      <Marker
-        position={{ lat: poi.lat, lng: poi.lng }}
-        icon={makeIcon(isCollected)}
-        eventHandlers={{
-          click: () => setOpen(true), // abre modal ao clicar
-        }}
-      />
-
-      {/* Modal principal */}
-      {open && (
+  // Modal principal (fora do mapa, via portal)
+  const modal = open
+    ? createPortal(
         <div
           className="fixed inset-0 bg-black/60 z-[999] flex justify-center overflow-y-auto touch-none"
           onClick={() => setOpen(false)}
@@ -131,11 +112,14 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
               </p>
             )}
           </div>
-        </div>
-      )}
+        </div>,
+        document.body
+      )
+    : null;
 
-      {/* Lightbox da imagem ampliada */}
-      {lightboxOpen && (
+  // Lightbox (fora do mapa, via portal)
+  const lightbox = lightboxOpen
+    ? createPortal(
         <div
           className="fixed inset-0 bg-black/80 z-[1000] flex items-center justify-center overflow-y-auto touch-none"
           onClick={() => setLightboxOpen(false)}
@@ -156,8 +140,35 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
               className="w-full max-h-[80vh] object-contain rounded-3xl shadow-xl"
             />
           </div>
-        </div>
-      )}
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <>
+      {/* Raio de alcance */}
+      <Circle
+        center={{ lat: poi.lat, lng: poi.lng }}
+        radius={poi.radius}
+        pathOptions={{
+          color: isCollected ? "gray" : "#e68d2f",
+          fillOpacity: 0.15,
+        }}
+      />
+
+      {/* Marcador */}
+      <Marker
+        position={{ lat: poi.lat, lng: poi.lng }}
+        icon={makeIcon(isCollected)}
+        eventHandlers={{
+          click: () => setOpen(true),
+        }}
+      />
+
+      {/* Portais */}
+      {modal}
+      {lightbox}
     </>
   );
 }
