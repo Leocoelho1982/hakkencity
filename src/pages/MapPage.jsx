@@ -25,7 +25,7 @@ export default function MapPage() {
   const { position, msg } = useGeolocation();
   const { heading } = useHeading();
   const avatar = useSelector((state) => state.user.image);
-  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  //const [leaderboardOpen, setLeaderboardOpen] = useState(false);
 
   const [city, setCity] = useState("—"); // 👈 estado para região/cidade
 
@@ -114,12 +114,7 @@ export default function MapPage() {
             </div>
           </div>
 
-          {/* BottomBar fixo em baixo */}
-          <div className="fixed bottom-0 w-full max-w-4xl z-50 pointer-events-none">
-            <div className="pointer-events-auto">
-              <BottomBar user={position} />
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
