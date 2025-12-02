@@ -32,8 +32,8 @@ export const POIS = [
     name: 'Casa do Rui',
     lat: 40.611944,   // 40°36'43" N
     lng: -8.651389,   // 8°39'05" O
-    radius: 15,
-    points: 25,
+    radius: 35,
+    points: 100,
     content: {
       title: 'Casa do Rui',
       text: 'Um ponto de interesse pessoal no percurso!',
