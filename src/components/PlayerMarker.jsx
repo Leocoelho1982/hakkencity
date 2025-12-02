@@ -3,14 +3,19 @@ import { Marker } from "react-leaflet";
 import L from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useSelector } from "react-redux";
-import avatarFallback from "../assets/avatars/avatar1.jpg"; // caso não haja imagem
+import avatarFallback from "../assets/avatars/avatar1.jpg";
 
-function makePinIcon({ size = 48, image }) {
+function makePinIcon({ size = 48, image, heading }) {
   const html = renderToStaticMarkup(
     <div className="player-pin" style={{ width: size, height: size + 16 }}>
       <div
         className="player-pin-avatar"
-        style={{ width: size, height: size }}
+        style={{
+          width: size,
+          height: size,
+          transform: `rotate(${heading || 0}deg)`,
+          transition: "transform 0.15s linear",
+        }}
       >
         <img src={image || avatarFallback} alt="avatar" />
         <div className="player-pin-ring" />
@@ -28,7 +33,7 @@ function makePinIcon({ size = 48, image }) {
   });
 }
 
-export default function PlayerMarker({ position }) {
+export default function PlayerMarker({ position, heading }) {
   const image = useSelector((state) => state.user.image);
 
   if (!position) return null;
@@ -36,7 +41,7 @@ export default function PlayerMarker({ position }) {
   return (
     <Marker
       position={position}
-      icon={makePinIcon({ image })}
+      icon={makePinIcon({ image, heading })}
     />
   );
 }

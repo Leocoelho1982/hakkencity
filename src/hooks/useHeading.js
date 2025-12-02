@@ -4,10 +4,12 @@ export default function useHeading() {
   const [heading, setHeading] = useState(null);
   const [hasPermission, setHasPermission] = useState(false);
 
+  // 1. Pedir permissão no iOS
   useEffect(() => {
-    // iOS 13+ pede permissão explícita
-    if (typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function") {
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
       DeviceOrientationEvent.requestPermission()
         .then((resp) => {
           if (resp === "granted") setHasPermission(true);
@@ -18,18 +20,30 @@ export default function useHeading() {
     }
   }, []);
 
+  // 2. Listener universal (Android + iOS)
   useEffect(() => {
     if (!hasPermission) return;
 
-    const handleOrientation = (event) => {
-      if (event.absolute && event.alpha != null) {
-        setHeading(event.alpha); // 0–360 graus
+    const handle = (event) => {
+      let h = null;
+
+      // 💙 iOS — usa a bússola nativa
+      if (event.webkitCompassHeading != null) {
+        h = event.webkitCompassHeading;
+      }
+
+      // 💚 Android Chrome — usa alpha
+      else if (event.alpha != null) {
+        h = 360 - event.alpha; // inverter sentido
+      }
+
+      if (h != null && !isNaN(h)) {
+        setHeading(h);
       }
     };
 
-    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
-    return () =>
-      window.removeEventListener("deviceorientationabsolute", handleOrientation, true);
+    window.addEventListener("deviceorientation", handle, true);
+    return () => window.removeEventListener("deviceorientation", handle, true);
   }, [hasPermission]);
 
   return { heading, hasPermission };
