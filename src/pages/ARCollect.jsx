@@ -24,7 +24,7 @@ export default function ARCollect({ onCollected }) {
   return (
     <div className="w-screen h-screen bg-black">
       <a-scene
-        mindar-image="imageTargetSrc: /targets/moeda.mind;"
+        mindar-image="imageTargetSrc: /targets/coin.mind;"
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: true"
         embedded

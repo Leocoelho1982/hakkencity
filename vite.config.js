@@ -4,15 +4,22 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  server: {
+    mimeTypes: {
+      "application/octet-stream": ["mind"]   // 👈 ESSENCIAL para MindAR
+    }
+  },
+
   plugins: [
     react(),
     tailwindcss(),
+
     VitePWA({
-      selfDestroying: true,           // sem offline/caching
+      selfDestroying: true, // sem cache offline
       registerType: "autoUpdate",
       includeAssets: [
         "/apple-touch-icon.png",
-        "/favicon.svg",                // se tiveres
+        "/favicon.svg",
         "/favicon.ico"
       ],
       manifest: {
@@ -26,8 +33,18 @@ export default defineConfig({
         background_color: "#ffffff",
         theme_color: "#000",
         icons: [
-          { src: "/logo_192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-          { src: "/logo_512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+          {
+            src: "/logo_192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any"
+          },
+          {
+            src: "/logo_512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+          }
         ]
       },
       workbox: undefined,
