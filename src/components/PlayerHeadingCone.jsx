@@ -5,8 +5,9 @@ export default function PlayerHeadingCone({ position, heading }) {
   if (!position?.lat || !position?.lng) return null;
   if (heading == null || isNaN(heading)) return null;
 
-  const angle = 70;      // abertura estilo Google Maps
-  const distance = 0.00045; // comprimento (~50m em zoom 18)
+  // Abertura igual ao Google Maps
+  const angle = 60;  
+  const distance = 0.00020; // aprox. 20m em zoom 18
 
   const rad = (deg) => (deg * Math.PI) / 180;
 
@@ -30,8 +31,8 @@ export default function PlayerHeadingCone({ position, heading }) {
     <Polygon
       positions={conePoints}
       pathOptions={{
-        color: "rgba(0, 150, 255, 0.8)",
-        fillColor: "rgba(0, 150, 255, 0.35)",
+        color: "rgba(0, 122, 255, 0.8)",       // estilo Google Maps
+        fillColor: "rgba(0, 122, 255, 0.35)",
         fillOpacity: 0.35,
         weight: 0,
       }}

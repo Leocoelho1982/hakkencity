@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { useSelector } from "react-redux";
 import avatarFallback from "../assets/avatars/avatar1.jpg";
 
-function makePinIcon({ size = 48, image, heading }) {
+function makePinIcon({ size = 48, image }) {
   const html = renderToStaticMarkup(
     <div className="player-pin" style={{ width: size, height: size + 16 }}>
       <div
@@ -13,7 +13,7 @@ function makePinIcon({ size = 48, image, heading }) {
         style={{
           width: size,
           height: size,
-          transform: `rotate(${heading || 0}deg)`,
+          transform: "rotate(0deg)",
           transition: "transform 0.15s linear",
         }}
       >

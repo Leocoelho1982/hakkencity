@@ -99,7 +99,7 @@ export default function MapPage() {
 
             <FlyToUser position={position} zoom={18} />
             <PlayerHeadingCone position={position} heading={heading} />
-            <PlayerMarker position={position} heading={heading} />
+            <PlayerMarker position={position} />
             <CompassControl heading={heading}  hasPermission={hasPermission}  requestPermission={requestPermission}/>
 
             {POIS.map((poi) => (
