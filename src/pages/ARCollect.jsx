@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 import { useNavigate, useParams } from "react-router-dom";
 import coinImg from "../assets/coin.png";
 
@@ -9,14 +8,21 @@ export default function ARCollect({ onCollected }) {
 
   function handleCollected() {
     if (onCollected) onCollected(poiId);
-    navigate(-1); // volta para o mapa
+    navigate(-1);
   }
 
   useEffect(() => {
-    const scene = document.querySelector("a-scene");
+    const target = document.querySelector("[mindar-image-target]");
+    if (!target) return;
 
-    scene.addEventListener("click", () => {
-      console.log("Moeda clicada, recolhendo…");
+    // Quando o target é encontrado → ativa a moeda
+    target.addEventListener("targetFound", () => {
+      console.log("TARGET FOUND");
+    });
+
+    // Ao clicar diretamente na moeda
+    target.addEventListener("click", () => {
+      console.log("Moeda clicada!");
       handleCollected();
     });
   }, []);
@@ -33,9 +39,10 @@ export default function ARCollect({ onCollected }) {
           <img id="coinTexture" src={coinImg} alt="coin" />
         </a-assets>
 
-        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        {/* CÂMERA CORRETA DO MINDAR */}
+        <a-camera mindar-image-camera></a-camera>
 
-        {/* Moeda que aparece quando o alvo é detectado */}
+        {/* MOEDA VINCULADA AO TARGET */}
         <a-entity
           mindar-image-target="targetIndex: 0"
           geometry="primitive: circle; radius: 0.35"
