@@ -5,12 +5,13 @@ import Leaderboard from "../components/Leaderboard";
 import PlayerMarker from "../components/PlayerMarker";
 import PoiMarker from "../components/PoiMarker";
 import TopBar from "../components/TopBar";
-import BottomBar from "../components/BottomBar";
+// import BottomBar from "../components/BottomBar";
 import FlyToUser from "../components/FlyToUser";
 
 import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 import { POIS } from "../data/pois";
+import PlayerHeadingCone from "../components/PlayerHeadingCone";
 
 // Função auxiliar para buscar distrito/cidade
 async function getRegion(lat, lng) {
@@ -91,6 +92,7 @@ export default function MapPage() {
             />
 
             <FlyToUser position={position} zoom={18} />
+            <PlayerHeadingCone position={position} heading={heading} />
             <PlayerMarker position={position} heading={heading} />
 
             {POIS.map((poi) => (
@@ -104,6 +106,10 @@ export default function MapPage() {
             ))}
           </MapContainer>
 
+          
+          
+
+
           {/* TopBar fixo em cima */}
           <div className="fixed top-0  w-full max-w-4xl z-50 pointer-events-none">
             <div className="pointer-events-auto">
@@ -113,11 +119,12 @@ export default function MapPage() {
                 totalPois={POIS.length}
                 gpsMsg={msg}
                 avatar={avatar}
-                city={city} // 👈 agora está definido
+                city={city}
               />
             </div>
           </div>
 
+          
           
         </div>
       </div>
