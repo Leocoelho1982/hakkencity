@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.9.0",
     "@tailwindcss/vite": "^4.1.13",
     "@turf/turf": "^7.2.0",
+    "aframe": "^1.7.1",
     "i18next": "^25.5.2",
     "leaflet": "^1.9.4",
     "react": "^19.1.1",

@@ -9,6 +9,7 @@ import RegisterPage from "./pages/RegisterPage";
 import PrivateRoute from "./pages/PrivateRoute";
 import MapPage from "./pages/MapPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ARCollect from "./pages/ARCollect";
 
 
 export default function App() {
@@ -35,6 +36,8 @@ export default function App() {
 
       <Route element={<PrivateRoute />}>
         <Route path="/map" element={<MapPage />} />
+        <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
+
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

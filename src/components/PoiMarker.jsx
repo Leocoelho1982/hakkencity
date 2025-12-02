@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Marker, Circle } from "react-leaflet";
 import { createPortal } from "react-dom";
 import L from "leaflet";
@@ -24,9 +25,10 @@ function formatDistance(meters) {
   return `${(meters / 1000).toFixed(2)} km`;
 }
 
-export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }) {
+export default function PoiMarker({ poi, userPosition, visited = {} }) {
   const [open, setOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Distância em metros
   const distance = useMemo(() => {
@@ -96,14 +98,12 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
 
             {canCollect ? (
               <button
-                onClick={() => {
-                  onCollect(poi);
-                  setOpen(false);
-                }}
-                className="w-full bg-[#E66A4E] text-white py-2 rounded-full font-title font-semibold hover:bg-[#d85d3f] transition cursor-pointer"
+                onClick={() => navigate(`/ar/${poi.id}`)}
+                className="w-full bg-[#E66A4E] text-white py-2 rounded-full font-title"
               >
-                Recolher +{poi.points} moedas
+                Procurar moeda em AR
               </button>
+
             ) : (
               <p className="text-center text-sm text-azul-60">
                 {isCollected
