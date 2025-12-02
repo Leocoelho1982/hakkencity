@@ -28,6 +28,20 @@ export const POIS = [
     },
   },
   {
+  id: 'cta',
+  name: 'Clube de Ténis de Aveiro',
+  lat: 40.638800,
+  lng: -8.655000,
+  radius: 15,
+  points: 100,
+  tags: ['desporto', 'lazer', 'bairro'],
+  content: {
+    title: 'Clube de Ténis de Aveiro',
+    text: 'Fundado em meados do século XX, o Clube de Ténis de Aveiro é uma das principais infraestruturas desportivas da cidade. Para além dos campos de ténis, dinamiza torneios, aulas e atividades que fomentam o convívio e a prática desportiva ao ar livre.',
+    image: '/assets/IMG_2889.jpg',
+  },
+},
+  {
     id: 'fotossintese',
     name: 'Fotossíntese',
     lat: 40.631200,

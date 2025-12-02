@@ -28,6 +28,12 @@ export default function App() {
     checkAuth();
   }, [dispatch, getSession]);
 
+
+  function handleCollect(poiId) {
+  console.log("Recolheu via AR:", poiId);
+}
+
+
   return (
     <Routes>
       <Route path="/" element={<LoadingScreen />} />

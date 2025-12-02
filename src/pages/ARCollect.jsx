@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import "mind-ar/dist/mindar-image.prod.js";
-import "mind-ar/dist/mindar-image.css";
+
 import { useNavigate, useParams } from "react-router-dom";
 import coinImg from "../assets/coin.png";
 
