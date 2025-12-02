@@ -28,7 +28,7 @@ export const POIS = [
     },
   },
   {
-  id: 'cta',
+  id: 'ctaT',
   name: 'Clube de Ténis de Aveiro',
   lat: 40.638800,
   lng: -8.655000,
