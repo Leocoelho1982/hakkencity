@@ -13,6 +13,7 @@ import useHeading from "../hooks/useHeading";
 import { POIS } from "../data/pois";
 import PlayerHeadingCone from "../components/PlayerHeadingCone";
 import CompassControl from "../components/CompassControl";
+import CenterOnMe from "../components/CenterOnMe";
 
 // Função auxiliar para buscar distrito/cidade
 async function getRegion(lat, lng) {
@@ -101,6 +102,7 @@ export default function MapPage() {
             <PlayerHeadingCone position={position} heading={heading} />
             <PlayerMarker position={position} />
             <CompassControl heading={heading}  hasPermission={hasPermission}  requestPermission={requestPermission}/>
+            <CenterOnMe position={position} />
 
             {POIS.map((poi) => (
               <PoiMarker
