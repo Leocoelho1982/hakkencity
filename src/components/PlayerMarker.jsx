@@ -5,43 +5,39 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { useSelector } from "react-redux";
 import avatarFallback from "../assets/avatars/avatar1.jpg";
 
-function makePinIcon({ size = 48, image }) {
+function makeCircleIcon({ size = 48, image }) {
   const html = renderToStaticMarkup(
-    <div className="player-pin" style={{ width: size, height: size + 16 }}>
-      <div
-        className="player-pin-avatar"
-        style={{
-          width: size,
-          height: size,
-          transform: "rotate(0deg)",
-          transition: "transform 0.15s linear",
-        }}
-      >
-        <img src={image || avatarFallback} alt="avatar" />
-        <div className="player-pin-ring" />
-      </div>
-      <div className="player-pin-tail" />
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: "3px solid #fff",
+        boxShadow: "0 0 10px rgba(0,0,0,0.3)",
+        backgroundColor: "#fff",
+      }}
+    >
+      <img
+        src={image || avatarFallback}
+        alt="avatar"
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
     </div>
   );
 
   return L.divIcon({
-    className: "player-icon",
+    className: "",
     html,
-    iconSize: [size, size + 16],
-    iconAnchor: [size / 2, size + 16],
-    popupAnchor: [0, -size / 2],
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],  // 👈 AGORA O CENTRO É O ANCORAMENTO
   });
 }
 
-export default function PlayerMarker({ position, heading }) {
+export default function PlayerMarker({ position }) {
   const image = useSelector((state) => state.user.image);
 
   if (!position) return null;
 
-  return (
-    <Marker
-      position={position}
-      icon={makePinIcon({ image, heading })}
-    />
-  );
+  return <Marker position={position} icon={makeCircleIcon({ image })} />;
 }
