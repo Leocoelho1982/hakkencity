@@ -2,49 +2,44 @@ import { useEffect, useState } from "react";
 
 export default function useHeading() {
   const [heading, setHeading] = useState(null);
-  const [hasPermission, setHasPermission] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
 
-  // 1. Pedir permissão no iOS
-  useEffect(() => {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-      DeviceOrientationEvent.requestPermission()
-        .then((resp) => {
-          if (resp === "granted") setHasPermission(true);
-        })
-        .catch(console.error);
-    } else {
-      setHasPermission(true);
+  function onOrientation(e) {
+    let h = null;
+    if (typeof e.webkitCompassHeading === "number") {
+      h = e.webkitCompassHeading;
+    } else if (typeof e.alpha === "number") {
+      h = 360 - e.alpha;
     }
+    if (h != null) setHeading((h % 360 + 360) % 360);
+  }
+
+  useEffect(() => {
+    const Sensor = window.DeviceOrientationEvent;
+    if (!Sensor) { setHasPermission(false); return; }
+
+    // ANDROID → listener direto
+    if (typeof Sensor.requestPermission !== "function") {
+      window.addEventListener("deviceorientation", onOrientation, true);
+      setHasPermission(true);
+      return () =>
+        window.removeEventListener("deviceorientation", onOrientation, true);
+    }
+
+    // iOS → requer botão
+    setHasPermission(false);
   }, []);
 
-  // 2. Listener universal (Android + iOS)
-  useEffect(() => {
-    if (!hasPermission) return;
-
-    const handle = (event) => {
-      let h = null;
-
-      // 💙 iOS — usa a bússola nativa
-      if (event.webkitCompassHeading != null) {
-        h = event.webkitCompassHeading;
+  const requestPermission = async () => {
+    const Sensor = window.DeviceOrientationEvent;
+    if (Sensor?.requestPermission) {
+      const res = await Sensor.requestPermission();
+      if (res === "granted") {
+        window.addEventListener("deviceorientation", onOrientation, true);
+        setHasPermission(true);
       }
+    }
+  };
 
-      // 💚 Android Chrome — usa alpha
-      else if (event.alpha != null) {
-        h = 360 - event.alpha; // inverter sentido
-      }
-
-      if (h != null && !isNaN(h)) {
-        setHeading(h);
-      }
-    };
-
-    window.addEventListener("deviceorientation", handle, true);
-    return () => window.removeEventListener("deviceorientation", handle, true);
-  }, [hasPermission]);
-
-  return { heading, hasPermission };
+  return { heading, hasPermission, requestPermission };
 }
