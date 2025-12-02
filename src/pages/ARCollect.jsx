@@ -12,28 +12,36 @@ export default function ARCollect({ onCollected }) {
   }
 
   useEffect(() => {
-    const target = document.querySelector("[mindar-image-target]");
-    if (!target) return;
+    const btn = document.getElementById("start-ar");
 
-    // Quando o target é encontrado → ativa a moeda
-    target.addEventListener("targetFound", () => {
-      console.log("TARGET FOUND");
-    });
+    btn.addEventListener("click", () => {
+      btn.style.display = "none";
 
-    // Ao clicar diretamente na moeda
-    target.addEventListener("click", () => {
-      console.log("Moeda clicada!");
-      handleCollected();
+      const scene = document.querySelector("a-scene");
+      scene.style.display = "block";
     });
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-black">
+    <div className="w-screen h-screen bg-black relative">
+
+      {/* Botão obrigatório para o iPhone permitir a câmera */}
+      <button
+        id="start-ar"
+        className="absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                   bg-gold-100 text-marron-100 px-8 py-4 rounded-2xl font-title shadow-xl"
+      >
+        Iniciar AR
+      </button>
+
+      {/* Cena começa ocultada até o usuário clicar */}
       <a-scene
+        style={{ display: "none" }}
         mindar-image="imageTargetSrc: /targets/coin.mind;"
+        color-space="sRGB"
+        embedded
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: true"
-        embedded
       >
         <a-assets>
           <img id="coinTexture" src={coinImg} alt="coin" />
@@ -42,13 +50,14 @@ export default function ARCollect({ onCollected }) {
         {/* CÂMERA CORRETA DO MINDAR */}
         <a-camera mindar-image-camera></a-camera>
 
-        {/* MOEDA VINCULADA AO TARGET */}
+        {/* MOEDA LIGADA AO TARGET */}
         <a-entity
           mindar-image-target="targetIndex: 0"
           geometry="primitive: circle; radius: 0.35"
           material="src: #coinTexture"
           position="0 0 0"
         ></a-entity>
+
       </a-scene>
     </div>
   );
