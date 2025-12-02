@@ -37,5 +37,27 @@
 
             <a-entity camera></a-entity>
         </a-scene>
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+                const marker = document.querySelector("#animated-marker");
+                const coinImage = document.querySelector(".clickable");
+
+                // Quando clicar na moeda → enviar evento ao React
+                coinImage.addEventListener("click", () => {
+                console.log("Moeda clicada! Enviando evento ao React...");
+                window.parent.postMessage({ type: "COLLECT_COIN" }, "*");
+                });
+
+                // Opcional: Quando o marcador for detectado, podes animar ou enviar logs
+                marker.addEventListener("markerFound", () => {
+                console.log("Marcador encontrado!");
+                });
+
+                marker.addEventListener("markerLost", () => {
+                console.log("Marcador perdido!");
+                });
+            });
+            </script>
+
     </body>
 </html>
