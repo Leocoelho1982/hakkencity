@@ -27,6 +27,18 @@ export const POIS = [
       image: '/assets/meialua.jpg',
     },
   },
+   {
+    id: 'casa-rui',
+    name: 'Casa do Rui',
+    lat: 40.611944,   // 40°36'43" N
+    lng: -8.651389,   // 8°39'05" O
+    radius: 15,
+    points: 25,
+    content: {
+      title: 'Casa do Rui',
+      text: 'Um ponto de interesse pessoal no percurso!',
+    },
+  },
   {
   id: 'ctaT',
   name: 'Clube de Ténis de Aveiro',
