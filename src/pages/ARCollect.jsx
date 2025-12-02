@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
 import coinImg from "../assets/coin.png";
 
@@ -8,56 +9,39 @@ export default function ARCollect({ onCollected }) {
 
   function handleCollected() {
     if (onCollected) onCollected(poiId);
-    navigate(-1);
+    navigate(-1); // volta para o mapa
   }
 
   useEffect(() => {
-    const btn = document.getElementById("start-ar");
+    const scene = document.querySelector("a-scene");
 
-    btn.addEventListener("click", () => {
-      btn.style.display = "none";
-
-      const scene = document.querySelector("a-scene");
-      scene.style.display = "block";
+    scene.addEventListener("click", () => {
+      console.log("Moeda clicada, recolhendo…");
+      handleCollected();
     });
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-black relative">
-
-      {/* Botão obrigatório para o iPhone permitir a câmera */}
-      <button
-        id="start-ar"
-        className="absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                   bg-gold-100 text-marron-100 px-8 py-4 rounded-2xl font-title shadow-xl"
-      >
-        Iniciar AR
-      </button>
-
-      {/* Cena começa ocultada até o usuário clicar */}
+    <div className="w-screen h-screen bg-black">
       <a-scene
-        style={{ display: "none" }}
         mindar-image="imageTargetSrc: /targets/coin.mind;"
-        color-space="sRGB"
-        embedded
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: true"
+        embedded
       >
         <a-assets>
           <img id="coinTexture" src={coinImg} alt="coin" />
         </a-assets>
 
-        {/* CÂMERA CORRETA DO MINDAR */}
-        <a-camera mindar-image-camera></a-camera>
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        {/* MOEDA LIGADA AO TARGET */}
+        {/* Moeda que aparece quando o alvo é detectado */}
         <a-entity
           mindar-image-target="targetIndex: 0"
           geometry="primitive: circle; radius: 0.35"
           material="src: #coinTexture"
           position="0 0 0"
         ></a-entity>
-
       </a-scene>
     </div>
   );
