@@ -79,8 +79,12 @@ export default function MapPage() {
           <MapContainer
             center={{ lat: 40.6405, lng: -8.6538 }}
             zoom={18}
+            whenReady={(map) => {
+              setTimeout(() => map.target.invalidateSize(), 50);
+            }}
             className="absolute inset-0 z-0"
           >
+
             <TileLayer
               attribution="&copy; OpenStreetMap"
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
