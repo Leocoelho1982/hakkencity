@@ -1,4 +1,4 @@
-export default function ARScene() {
+export default function ARCollect() {
   return (
     <iframe
       src="/ar/index.html"
