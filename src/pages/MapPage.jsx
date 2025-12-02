@@ -30,6 +30,11 @@ export default function MapPage() {
 
   const [city, setCity] = useState("—"); // 👈 estado para região/cidade
 
+
+  console.log("HEADING ATUAL:", heading);
+
+
+  
   // visited + score com persistência
   const [visited, setVisited] = useState(() =>
     JSON.parse(localStorage.getItem("visited") || "{}")
