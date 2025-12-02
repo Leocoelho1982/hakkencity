@@ -12,6 +12,7 @@ import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 import { POIS } from "../data/pois";
 import PlayerHeadingCone from "../components/PlayerHeadingCone";
+import CompassControl from "../components/CompassControl";
 
 // Função auxiliar para buscar distrito/cidade
 async function getRegion(lat, lng) {
@@ -24,7 +25,7 @@ async function getRegion(lat, lng) {
 
 export default function MapPage() {
   const { position, msg } = useGeolocation();
-  const { heading } = useHeading();
+  const { heading, hasPermission, requestPermission } = useHeading();
   const avatar = useSelector((state) => state.user.image);
   //const [leaderboardOpen, setLeaderboardOpen] = useState(false);
 
@@ -34,7 +35,7 @@ export default function MapPage() {
   console.log("HEADING ATUAL:", heading);
 
 
-  
+
   // visited + score com persistência
   const [visited, setVisited] = useState(() =>
     JSON.parse(localStorage.getItem("visited") || "{}")
@@ -99,6 +100,7 @@ export default function MapPage() {
             <FlyToUser position={position} zoom={18} />
             <PlayerHeadingCone position={position} heading={heading} />
             <PlayerMarker position={position} heading={heading} />
+            <CompassControl heading={heading}  hasPermission={hasPermission}  requestPermission={requestPermission}/>
 
             {POIS.map((poi) => (
               <PoiMarker

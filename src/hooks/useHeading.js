@@ -18,7 +18,7 @@ export default function useHeading() {
     const Sensor = window.DeviceOrientationEvent;
     if (!Sensor) { setHasPermission(false); return; }
 
-    // ANDROID → listener direto
+    // ANDROID — funciona sem permissão
     if (typeof Sensor.requestPermission !== "function") {
       window.addEventListener("deviceorientation", onOrientation, true);
       setHasPermission(true);
@@ -26,7 +26,7 @@ export default function useHeading() {
         window.removeEventListener("deviceorientation", onOrientation, true);
     }
 
-    // iOS → requer botão
+    // iOS — precisa de clique
     setHasPermission(false);
   }, []);
 
