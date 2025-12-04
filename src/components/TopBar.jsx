@@ -82,7 +82,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
 
         {/* Cidade */}
         <div className="text-center font-title font-regular text-[#5A2C0A] mt-1">
-          Estás em: {city || "—"}
+          Localização: {city || "—"}
         </div>
       </div>
 
