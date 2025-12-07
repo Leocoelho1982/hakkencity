@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import coinIcon from "../assets/coin.png";
 import filterIcon from "../assets/filter.png";
@@ -8,14 +9,10 @@ import { useNavigate } from "react-router-dom";
 export default function TopBar({ score, visitedCount, totalPois, avatar, city }) {
   const navigate = useNavigate();
 
-  // --- NORMALIZAR AVATAR ---
-  // avatar da BD = "avatar_1_p.png"
   const avatarUrl = avatar || avatarFallback;
-
 
   return (
     <div className="relative">
-      {/* Barra principal */}
       <div className="bg-[#FFF4D6] p-2 rounded-b-3xl w-full border-b border-b-5 border-b-black/20">
         <div
           className="flex items-center justify-between 
@@ -37,7 +34,11 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
           </div>
 
           {/* Moedas */}
-          <div className="relative p-[2px] bg-[#FBCB6D] border-[#5A2C0A] border-3 rounded-3xl">
+          <div
+            className="relative p-[2px] bg-[#FBCB6D] border-[#5A2C0A] border-3 rounded-3xl cursor-pointer hover:scale-105 transition"
+            onClick={() => navigate("/wallet")}
+            title="Abrir Tesouro"
+          >
             <img
               src={coinIcon}
               alt="Moeda"
@@ -51,8 +52,13 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
             </div>
           </div>
 
-          {/* Progresso */}
-          <div className="relative p-[2px] bg-[#FBCB6D] border-[#8B3A1A] border-3 rounded-3xl">
+          {/* Progresso (agora com clique para abrir a página de POIs) */}
+          <div
+            className="relative p-[2px] bg-[#FBCB6D] border-[#8B3A1A] border-3 rounded-3xl 
+                       cursor-pointer hover:scale-105 transition"
+            onClick={() => navigate("/pois")}
+            title="Ver lista de POIs"
+          >
             <img
               src={mapicon}
               alt="Progress"

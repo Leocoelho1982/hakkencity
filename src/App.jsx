@@ -13,6 +13,8 @@ import ARCollect from "./pages/ARCollect";
 import ProfilePage from "./pages/ProfilePage";
 import ApiTest from "./pages/ApiTest";
 import LogoutPage from "./pages/LogoutPage";
+import WalletPage from "./pages/WalletPage";
+import POIProgressPage from "./pages/POIProgressPage";
 
 
 export default function App() {
@@ -56,6 +58,9 @@ export default function App() {
         <Route path="/map" element={<MapPage />} />
         <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/wallet" element={<WalletPage />} />
+        <Route path="/pois" element={<POIProgressPage />} />
+
 
       </Route>
 
