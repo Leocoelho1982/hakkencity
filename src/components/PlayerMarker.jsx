@@ -33,7 +33,7 @@ function makeCircleIcon({ size = 48, image }) {
     className: "",
     html,
     iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2], // centro do ícone
+    iconAnchor: [size / 2, size / 2],
   });
 }
 
@@ -43,11 +43,8 @@ export default function PlayerMarker({ position }) {
 
   if (!position) return null;
 
-  // SE VIER DO BD → transformar em URL correta
-  // BD retorna: "avatar_1_p.png"
-  const avatarUrl = image
-    ? `/assets/avatars/${image}` // monta path verdadeiro
-    : avatarFallback;
+  // Agora funciona: backend devolve o URL completo já com hash
+  const avatarUrl = image || avatarFallback;
 
   return <Marker position={position} icon={makeCircleIcon({ image: avatarUrl })} />;
 }

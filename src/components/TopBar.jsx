@@ -10,9 +10,8 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
 
   // --- NORMALIZAR AVATAR ---
   // avatar da BD = "avatar_1_p.png"
-  const avatarUrl = avatar
-    ? `/assets/avatars/${avatar}` // monta o path correto
-    : avatarFallback;
+  const avatarUrl = avatar || avatarFallback;
+
 
   return (
     <div className="relative">
