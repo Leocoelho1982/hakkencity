@@ -1,47 +1,46 @@
 /* eslint-disable */
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { logoutUser } from "../features/userSlice";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/userSlice";             // ✅ CORRIGIDO!
+import { useLogoutUserMutation } from "../features/authApi";
 import { FiLogOut } from "react-icons/fi";
 
 export default function LogoutPage() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [logoutRequest] = useLogoutUserMutation();
 
   useEffect(() => {
-    // Limpa Redux imediatamente
-    dispatch(logoutUser());
+    const doLogout = async () => {
+      try {
+        await logoutRequest().unwrap();   // apaga cookie no backend
+      } catch (err) {
+        console.warn("Erro ao terminar sessão:", err);
+      }
 
-    // Chama logout no backend para limpar cookie
-    fetch("https://api.hakkencity.com/api/users/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+      dispatch(logout());                 // limpa Redux
+      setTimeout(() => navigate("/login"), 1500);
+    };
 
-    // Redireciona com delay
-    const timer = setTimeout(() => navigate("/login"), 1500);
-    return () => clearTimeout(timer);
-  }, [dispatch, navigate]);
+    doLogout();
+  }, [dispatch, navigate, logoutRequest]);
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-[#FFF4D6] px-6">
+    <div className="h-screen flex flex-col items-center justify-center bg-[#FFF4D4] px-4">
+      <FiLogOut className="text-marron-100" size={64} />
 
-      <div className="bg-white/90 border-4 border-[#5A2C0A] rounded-3xl p-10 shadow-xl text-center max-w-xs">
-        
-        <FiLogOut className="text-[#8B3A1A] mx-auto mb-4" size={64} />
+      <h1 className="font-title text-3xl text-marron-100 mt-4">
+        A terminar sessão…
+      </h1>
 
-        <h1 className="text-2xl font-title text-marron-100 mb-2">
-          A sair da aventura...
-        </h1>
+      <p className="text-marron-80 text-lg mt-2">
+        Serás redirecionado em instantes.
+      </p>
 
-        <p className="text-marron-80 text-sm">
-          Até breve, explorador! 👋  
-        </p>
-
-        <div className="mt-6 animate-pulse text-3xl">🚪</div>
+      <div className="mt-6 animate-pulse">
+        <div className="w-14 h-14 border-4 border-marron-100 border-t-transparent rounded-full animate-spin" />
       </div>
-
     </div>
   );
 }
