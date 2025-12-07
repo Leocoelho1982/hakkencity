@@ -12,6 +12,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ARCollect from "./pages/ARCollect";
 import ProfilePage from "./pages/ProfilePage";
 import ApiTest from "./pages/ApiTest";
+import LogoutPage from "./pages/LogoutPage";
 
 
 export default function App() {
@@ -47,6 +48,8 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/test-api" element={<ApiTest />} />
+      <Route path="/logout" element={<LogoutPage />} />
+
 
 
       <Route element={<PrivateRoute />}>
