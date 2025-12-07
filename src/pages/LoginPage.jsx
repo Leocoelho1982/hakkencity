@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { setUser } from "../features/userSlice";
 import { useLoginUserMutation } from "../features/authApi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import coin from "../assets/coin.png";
+//import coin from "../assets/coin.png";
 import background from "../assets/background.png";
 
 export default function LoginPage() {
@@ -56,8 +56,7 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-sm bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl shadow-xl p-6 border-4 border-marron-100">
         <h1 className="text-2xl flex items-center justify-center font-title text-marron-100 mb-6">
-          <img src={coin} className="h-10 w-10 mr-3" alt="Coin" />
-          Entrar
+          A Caminho do Tesouro
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">

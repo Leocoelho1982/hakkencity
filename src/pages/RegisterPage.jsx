@@ -4,20 +4,35 @@ import { useNavigate, Link } from "react-router-dom";
 import { setUser } from "../features/userSlice";
 import { useRegisterUserMutation } from "../features/authApi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import coin from "../assets/coin.png";
-import background from "../assets/background.png";
+import { motion } from "framer-motion";
 
-import avatar1 from "../assets/avatars/avatar1.jpg";
-import avatar2 from "../assets/avatars/avatar2.jpg";
-import avatar3 from "../assets/avatars/avatar3.jpg";
-import avatar4 from "../assets/avatars/avatar4.jpg";
-import avatar5 from "../assets/avatars/avatar5.jpg";
-import avatar6 from "../assets/avatars/avatar6.jpg";
-import avatar7 from "../assets/avatars/avatar7.jpg";
-import avatar8 from "../assets/avatars/avatar8.jpg";
+import mapBg from "../assets/background.png";
+
+// FULL BODY
+import flint from "../assets/avatars/avatar_1.png";
+import aria from "../assets/avatars/avatar_2.jpg";
+
+// HEAD ICONS (para gravar no backend)
+import flintHead from "../assets/avatars/avatar_1_p.png";
+import ariaHead from "../assets/avatars/avatar_2_p.jpg";
 
 export default function RegisterPage() {
-  const images = [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8];
+  const avatars = [
+    {
+      id: "flint",
+      name: "Flint",
+      description: "O Explorador Destemido",
+      img: flint,        // corpo inteiro (para mostrar)
+      head: flintHead,   // cabeça (para gravar)
+    },
+    {
+      id: "aria",
+      name: "Aria",
+      description: "A Capitã Aventureira",
+      img: aria,         // corpo inteiro
+      head: ariaHead,    // cabeça
+    },
+  ];
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,7 +42,7 @@ export default function RegisterPage() {
     username: "",
     password: "",
     confirmPassword: "",
-    image: "", // 👈 agora chama-se image
+    image: "", // grava APENAS a cabeça
   });
 
   const [error, setError] = useState("");
@@ -42,12 +57,11 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    if (form.password !== form.confirmPassword) {
-      setError("As palavras-passe não coincidem");
-      return;
-    }
+    if (form.password !== form.confirmPassword)
+      return setError("As palavras-passe não coincidem");
 
-    console.log("📦 Dados enviados para backend:", form);
+    if (!form.image)
+      return setError("Escolhe primeiro o teu Avatar");
 
     try {
       const res = await registerUser(form).unwrap();
@@ -60,49 +74,71 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="h-screen w-screen bg-cover bg-center bg-fixed flex items-center justify-center px-4"
-      style={{ backgroundImage: `url(${background})` }}
+      className="h-screen w-screen bg-cover bg-center flex items-center justify-center px-4"
+      style={{ backgroundImage: `url(${mapBg})` }}
     >
-      <div className="w-full max-w-sm bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl shadow-xl p-6 border-4 border-marron-100 max-h-[90vh] overflow-y-auto">
-        <h1 className="text-2xl flex items-center justify-center font-title text-marron-100 mb-6">
-          <img src={coin} className="h-10 w-10 mr-3" alt="Coin" />
-          Criar Conta
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-sm bg-[#FFF4D4] rounded-3xl shadow-2xl border-4 border-marron-100 p-7 relative overflow-hidden"
+      >
+
+        <h1 className="text-3xl text-center font-title text-marron-100 drop-shadow-md">
+          Novo Explorador
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Image selection */}
-          <div>
-            <p className="text-center font-semibold text-marron-100 mb-2">
-              Escolhe o teu Avatar
-            </p>
-            <div className="grid grid-cols-4 gap-3 justify-items-center">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setForm({ ...form, image: img })}
-                  className={`p-1 rounded-xl border-4 ${
-                    form.image === img ? "border-marron-100" : "border-transparent"
-                  }`}
-                >
-                  <img src={img} alt={`Avatar ${idx + 1}`} className="w-16 h-16 rounded-lg" />
-                </button>
-              ))}
-            </div>
-          </div>
+        <p className="text-center text-marron-80 text-sm mt-1 mb-4 italic">
+          Escolhe o teu herói e começa a aventura
+        </p>
 
-          {/* Username */}
+        {/* AVATAR SELECT */}
+        <div className="grid grid-cols-2 gap-5 justify-items-center mb-4">
+          {avatars.map(av => (
+            <motion.button
+              key={av.id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => setForm({ ...form, image: av.head })} // ← grava só a cabeça
+              className={`
+                rounded-2xl border-4 bg-white shadow-lg p-3 transition-all w-36 h-60 flex flex-col items-center justify-start
+                ${form.image === av.head
+                  ? "border-yellow-500 shadow-yellow-400 shadow-2xl"
+                  : "border-transparent opacity-85 hover:opacity-100"
+                }
+              `}
+            >
+              {/* Full-body */}
+              <img
+                src={av.img}
+                alt={av.name}
+                className="w-full h-40 object-contain drop-shadow-md"
+              />
+
+              <p className="text-center font-semibold text-marron-100 mt-1 text-sm">
+                {av.name}
+              </p>
+
+              <p className="text-center text-xs text-marron-80 leading-tight">
+                {av.description}
+              </p>
+            </motion.button>
+          ))}
+        </div>
+
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+
           <input
             type="text"
             name="username"
             placeholder="Username"
             value={form.username}
             onChange={handleChange}
-            className="block w-full rounded-full border-2 bg-white border-marron-100 h-[50px] px-4"
+            className="block w-full rounded-full border-2 border-marron-100 bg-white/80 backdrop-blur-sm h-[48px] px-4 focus:ring-2 focus:ring-yellow-400 outline-none"
             required
           />
 
-          {/* Password */}
           <div className="relative">
             <input
               type={showPass ? "text" : "password"}
@@ -110,7 +146,7 @@ export default function RegisterPage() {
               placeholder="Palavra Passe"
               value={form.password}
               onChange={handleChange}
-              className="block w-full rounded-full bg-white border-2 border-marron-100 h-[50px] px-4"
+              className="block w-full rounded-full border-2 border-marron-100 bg-white/80 h-[48px] px-4 focus:ring-2 focus:ring-yellow-400 outline-none"
               required
             />
             <button
@@ -122,7 +158,6 @@ export default function RegisterPage() {
             </button>
           </div>
 
-          {/* Confirm Password */}
           <div className="relative">
             <input
               type={showConfirm ? "text" : "password"}
@@ -130,7 +165,7 @@ export default function RegisterPage() {
               placeholder="Confirmar Palavra Passe"
               value={form.confirmPassword}
               onChange={handleChange}
-              className="block w-full rounded-full bg-white border-2 border-marron-100 h-[50px] px-4"
+              className="block w-full rounded-full border-2 border-marron-100 bg-white/80 h-[48px] px-4 focus:ring-2 focus:ring-yellow-400 outline-none"
               required
             />
             <button
@@ -142,24 +177,33 @@ export default function RegisterPage() {
             </button>
           </div>
 
-          {error && <p className="text-vermelho-100 text-sm text-center">{error}</p>}
+          {error && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-red-600 text-sm text-center font-semibold"
+            >
+              {error}
+            </motion.p>
+          )}
 
-          <button
+          <motion.button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-marron-40 text-white font-title text-lg py-3 rounded-full shadow-md hover:bg-marron-60 transition disabled:opacity-50"
+            whileTap={{ scale: 0.95 }}
+            className="w-full bg-gradient-to-b from-[#E86A46] to-[#D3563A] text-white font-title text-xl py-3 rounded-full shadow-lg hover:brightness-110 transition disabled:opacity-50"
           >
             {isLoading ? "A criar conta..." : "Começar Aventura!"}
-          </button>
+          </motion.button>
         </form>
 
         <div className="mt-6 text-center text-sm font-semibold text-marron-100">
           Já tem conta?{" "}
-          <Link to="/login" className="hover:underline">
+          <Link to="/login" className="underline hover:text-marron-80">
             Entrar
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
