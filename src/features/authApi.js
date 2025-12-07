@@ -4,16 +4,17 @@ export const authApi = createApi({
   reducerPath: "authApi",
 
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.hakkencity.com/api/users",
+  baseUrl: "https://api.hakkencity.com/api/users",
+  credentials: "include",   // ← OBRIGATÓRIO PARA COOKIES!!!
+  prepareHeaders: (headers, { getState }) => {
+    const token = getState().user.token;
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+}),
 
-    prepareHeaders: (headers, { getState }) => {
-      const token = getState().user.token;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
 
   endpoints: (builder) => ({
     // LOGIN
