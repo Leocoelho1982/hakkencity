@@ -11,7 +11,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
   return (
     <div className="relative">
       {/* Barra principal */}
-      <div className="bg-[#FFF4D6] p-2 rounded-b-3xl w-full border-b border-b-5 border-b-black/20">
+      <div className="bg-[#FFF4D6]/20 p-2 rounded-b-3xl w-full border-b border-b-5 border-b-black/20">
         <div
           className="flex items-center justify-between 
                      bg-gradient-to-b from-[#FFF4D6] to-[#FBCB6D] 
@@ -82,7 +82,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
 
         {/* Cidade */}
         <div className="text-center font-title font-regular text-[#5A2C0A] mt-1">
-          Estás em: {city || "—"}
+          Localização: {city || "—"}
         </div>
       </div>
 
