@@ -1,67 +1,52 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Routes, Route, Navigate } from "react-router-dom";
-
-import { setUser, logoutUser } from "./features/userSlice";
 import { useLazyGetSessionQuery } from "./features/authApi";
-
+import { setUser } from "./features/userSlice";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import LoadingScreen from "./pages/LoadingScreen";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import MapPage from "./pages/MapPage";
 import PrivateRoute from "./pages/PrivateRoute";
+import MapPage from "./pages/MapPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import ARCollect from "./pages/ARCollect";
+
 
 export default function App() {
   const dispatch = useDispatch();
-  const [checkSession, { isLoading }] = useLazyGetSessionQuery();
-
-  const [booting, setBooting] = useState(true); 
-  // controla o estado inicial enquanto a sessão carrega
+  const [getSession] = useLazyGetSessionQuery();
 
   useEffect(() => {
-    async function loadSession() {
+    const checkAuth = async () => {
       try {
-        const res = await checkSession().unwrap();  // GET /users/me
-        dispatch(setUser(res.user));                // user completo
+        const { user } = await getSession().unwrap();
+        dispatch(setUser(user));
       } catch {
-        dispatch(logoutUser());                     // sessão inválida
-      } finally {
-        setBooting(false);                          // terminou o boot
+        console.log("Sessão não encontrada");
       }
-    }
+    };
+    checkAuth();
+  }, [dispatch, getSession]);
 
-    loadSession();
-  }, [dispatch, checkSession]);
 
-  // Enquanto o App está a validar a sessão, aparece um loading simples
-  if (booting || isLoading) {
-    return (
-      <div className="h-screen flex items-center justify-center text-marron-100 font-title">
-        A carregar...
-      </div>
-    );
-  }
+  function handleCollect(poiId) {
+  console.log("Recolheu via AR:", poiId);
+}
+
 
   return (
     <Routes>
-
-      {/* LOGIN */}
+      <Route path="/" element={<LoadingScreen />} />
       <Route path="/login" element={<LoginPage />} />
-
-      {/* REGISTO */}
       <Route path="/register" element={<RegisterPage />} />
 
-      {/* ROTA PRIVADA */}
-      <Route
-        path="/map"
-        element={
-          <PrivateRoute>
-            <MapPage />
-          </PrivateRoute>
-        }
-      />
+      <Route element={<PrivateRoute />}>
+        <Route path="/map" element={<MapPage />} />
+        <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
 
-      {/* fallback */}
-      <Route path="*" element={<Navigate to="/map" />} />
+      </Route>
+
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
