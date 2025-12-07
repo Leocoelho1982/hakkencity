@@ -18,12 +18,26 @@ export default function LoginPage() {
 
   // ✅ Verifica se já existe utilizador guardado e restaura automaticamente
   useEffect(() => {
-    const storedUser = localStorage.getItem("hakkenUser");
-    if (storedUser) {
-      dispatch(setUser(JSON.parse(storedUser)));
-      navigate("/map"); // entra diretamente sem pedir login
+  async function checkSession() {
+    try {
+      const res = await fetch("https://api.hakkencity.com/api/users/me", {
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      if (data?.user) {
+        dispatch(setUser(data.user));
+        localStorage.setItem("hakkenUser", JSON.stringify(data.user));
+        navigate("/map");
+      }
+    } catch (err) {
+      console.log("Sem sessão ativa");
     }
-  }, [dispatch, navigate]);
+  }
+
+  checkSession();
+}, [dispatch, navigate]);
+
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
