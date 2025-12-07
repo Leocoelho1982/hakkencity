@@ -14,9 +14,7 @@ export default function ProfilePage() {
   const username = useSelector((state) => state.user.username);
   const avatar = useSelector((state) => state.user.image);
 
-  const avatarUrl = avatar
-    ? `/assets/avatars/${avatar}`
-    : "/assets/avatars/avatar1.jpg";
+  const avatarUrl = image || avatarFallback;
 
   async function handleLogout() {
     try {
