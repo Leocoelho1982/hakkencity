@@ -4,7 +4,8 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     
-    baseUrl: "https://api.hakkencity.com/api/users",
+    //baseUrl: "https://api.hakkencity.com/api/users",
+    baseUrl: "http://localhost:5009/api/users",
     credentials: "include", // garante que todos enviam cookies
   }),
   endpoints: (builder) => ({

@@ -15,6 +15,7 @@
     "@turf/turf": "^7.2.0",
     "aframe": "^1.7.1",
     "framer-motion": "^12.23.25",
+    "howler": "^2.2.4",
     "i18next": "^25.5.2",
     "leaflet": "^1.9.4",
     "react": "^19.1.1",
@@ -24,7 +25,9 @@
     "react-leaflet": "^5.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.8.2",
+    "react-tsparticles": "^2.12.2",
     "tailwindcss": "^4.1.13",
+    "tsparticles": "^3.9.1",
     "vite-plugin-pwa": "^1.0.3"
   },
   "devDependencies": {

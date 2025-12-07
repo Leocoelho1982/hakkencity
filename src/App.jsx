@@ -10,6 +10,8 @@ import PrivateRoute from "./pages/PrivateRoute";
 import MapPage from "./pages/MapPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ARCollect from "./pages/ARCollect";
+import ProfilePage from "./pages/ProfilePage";
+import ApiTest from "./pages/ApiTest";
 
 
 export default function App() {
@@ -17,16 +19,21 @@ export default function App() {
   const [getSession] = useLazyGetSessionQuery();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { user } = await getSession().unwrap();
-        dispatch(setUser(user));
-      } catch {
-        console.log("Sessão não encontrada");
-      }
-    };
-    checkAuth();
-  }, [dispatch, getSession]);
+  const checkAuth = async () => {
+    try {
+      const res = await getSession().unwrap();
+
+      console.log("📌 /me RESPONSE:", res);
+
+      dispatch(setUser(res.user));
+    } catch (err) {
+      console.log("❌ Sessão não encontrada:", err);
+    }
+  };
+
+  checkAuth();
+}, [dispatch, getSession]);
+
 
 
   function handleCollect(poiId) {
@@ -39,10 +46,13 @@ export default function App() {
       <Route path="/" element={<LoadingScreen />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/test-api" element={<ApiTest />} />
+
 
       <Route element={<PrivateRoute />}>
         <Route path="/map" element={<MapPage />} />
         <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
+        <Route path="/profile" element={<ProfilePage />} />
 
       </Route>
 

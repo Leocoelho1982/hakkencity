@@ -13,7 +13,7 @@ import flintFull from "../assets/avatars/avatar_1.png";
 import ariaFull from "../assets/avatars/avatar_2.jpg";
 
 // Avatares HEAD (para gravar)
-import flintHead from "../assets/avatars/avatar_1_p.png";
+import flintHead from "../assets/avatars/avatar_1_p.jpg";
 import ariaHead from "../assets/avatars/avatar_2_p.jpg";
 
 export default function RegisterPage() {
@@ -69,8 +69,10 @@ export default function RegisterPage() {
       const res = await registerUser({
         username: form.username,
         password: form.password,
-        image: form.image, // ← avatar HEAD
+        image: form.imageFile, // ← avatar HEAD
       }).unwrap();
+
+      console.log(res)
 
       dispatch(setUser(res.user));
       navigate("/map");
@@ -108,7 +110,12 @@ export default function RegisterPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.92 }}
               onClick={() =>
-                setForm({ ...form, image: av.head, fullImage: av.full })
+                setForm({
+                  ...form,
+                  image: av.head,               // caminho completo (para comparar)
+                  imageFile: av.head.split("/").pop(), // só o ficheiro (para o backend)
+                  fullImage: av.full            // preview
+                })
               }
               className={`
                 rounded-xl border-4 bg-white shadow-lg p-3 transition-all w-36 h-56 flex flex-col items-center
@@ -133,6 +140,7 @@ export default function RegisterPage() {
             </motion.button>
           ))}
         </div>
+
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-3">

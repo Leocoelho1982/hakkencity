@@ -1,43 +1,54 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useSelector } from "react-redux";
+
 import Leaderboard from "../components/Leaderboard";
 import PlayerMarker from "../components/PlayerMarker";
 import PoiMarker from "../components/PoiMarker";
 import TopBar from "../components/TopBar";
-// import BottomBar from "../components/BottomBar";
 import FlyToUser from "../components/FlyToUser";
-
-import useGeolocation from "../hooks/useGeolocation";
-import useHeading from "../hooks/useHeading";
-import { POIS } from "../data/pois";
 import PlayerHeadingCone from "../components/PlayerHeadingCone";
 import CompassControl from "../components/CompassControl";
 import CenterOnMe from "../components/CenterOnMe";
 
-// Função auxiliar para buscar distrito/cidade
+import useGeolocation from "../hooks/useGeolocation";
+import useHeading from "../hooks/useHeading";
+import { POIS } from "../data/pois";
+
+// ---- Helper para buscar cidade/distrito ----
 async function getRegion(lat, lng) {
   const res = await fetch(
     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`
   );
   const data = await res.json();
-  return data.address.state || data.address.county || data.address.city || "—";
+  return (
+    data.address.state ||
+    data.address.county ||
+    data.address.city ||
+    "—"
+  );
 }
 
 export default function MapPage() {
+  // Sessão
+  const { isAuthenticated, loading, image: avatar } = useSelector(
+    (state) => state.user
+  );
+
+  // Se ainda estiver a carregar sessão → NÃO renderiza mapa
+  if (loading) return <div className="text-center mt-10">A carregar…</div>;
+
+  // Se não estiver autenticado (fallback extra — PrivateRoute cuida disto)
+  if (!isAuthenticated) return null;
+
+  // Geo + Heading
   const { position, msg } = useGeolocation();
   const { heading, hasPermission, requestPermission } = useHeading();
-  const avatar = useSelector((state) => state.user.image);
-  //const [leaderboardOpen, setLeaderboardOpen] = useState(false);
 
-  const [city, setCity] = useState("—"); // 👈 estado para região/cidade
+  // Região
+  const [city, setCity] = useState("—");
 
-
-  console.log("HEADING ATUAL:", heading);
-
-
-
-  // visited + score com persistência
+  // POIs visitados + score
   const [visited, setVisited] = useState(() =>
     JSON.parse(localStorage.getItem("visited") || "{}")
   );
@@ -45,6 +56,7 @@ export default function MapPage() {
     Number(localStorage.getItem("score") || 0)
   );
 
+  // Guardar progresso
   useEffect(() => {
     localStorage.setItem("visited", JSON.stringify(visited));
   }, [visited]);
@@ -53,26 +65,25 @@ export default function MapPage() {
     localStorage.setItem("score", String(score));
   }, [score]);
 
-  // Atualiza cidade/distrito sempre que a posição muda
+  // Atualizar localização → cidade/distrito
   useEffect(() => {
-    async function fetchRegion() {
-      if (position?.lat && position?.lng) {
-        try {
-          const region = await getRegion(position.lat, position.lng);
-          setCity(region);
-        } catch (err) {
-          console.error("Erro ao buscar região:", err);
-        }
+    if (!position?.lat || !position?.lng) return;
+    (async () => {
+      try {
+        const region = await getRegion(position.lat, position.lng);
+        setCity(region);
+      } catch (e) {
+        console.error("Erro ao buscar região:", e);
       }
-    }
-    fetchRegion();
+    })();
   }, [position]);
 
+  // Recolha de POIs
   function handleCollect(poi) {
     if (!visited[poi.id]) {
       setVisited((prev) => ({ ...prev, [poi.id]: true }));
       setScore((prev) => prev + (poi.points || 0));
-      if (navigator.vibrate) navigator.vibrate(80);
+      navigator.vibrate?.(80);
     }
   }
 
@@ -83,27 +94,35 @@ export default function MapPage() {
     >
       <div className="flex flex-col w-full max-w-4xl bg-white/90">
         <div className="flex-1 relative">
-          {/* Mapa */}
+
+          {/* ------- MAPA ------- */}
           <MapContainer
             center={{ lat: 40.6405, lng: -8.6538 }}
             zoom={18}
-            whenReady={(map) => {
-              setTimeout(() => map.target.invalidateSize(), 50);
-            }}
             className="absolute inset-0 z-0"
+            whenReady={(map) => {
+              setTimeout(() => map.target.invalidateSize(), 80);
+            }}
           >
-
             <TileLayer
               attribution="&copy; OpenStreetMap"
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
+            {/* Utilizador */}
             <FlyToUser position={position} zoom={18} />
             <PlayerHeadingCone position={position} heading={heading} />
             <PlayerMarker position={position} />
-            <CompassControl heading={heading}  hasPermission={hasPermission}  requestPermission={requestPermission}/>
+
+            {/* Botões */}
+            <CompassControl
+              heading={heading}
+              hasPermission={hasPermission}
+              requestPermission={requestPermission}
+            />
             <CenterOnMe position={position} />
 
+            {/* POIs */}
             {POIS.map((poi) => (
               <PoiMarker
                 key={poi.id}
@@ -115,12 +134,9 @@ export default function MapPage() {
             ))}
           </MapContainer>
 
-          
-          
 
-
-          {/* TopBar fixo em cima */}
-          <div className="fixed top-0  w-full max-w-4xl z-50 pointer-events-none">
+          {/* ------- TOP BAR (avatar + score + notificações GPS) ------- */}
+          <div className="fixed top-0 w-full max-w-4xl z-50 pointer-events-none">
             <div className="pointer-events-auto">
               <TopBar
                 score={score}
@@ -133,8 +149,6 @@ export default function MapPage() {
             </div>
           </div>
 
-          
-          
         </div>
       </div>
     </div>

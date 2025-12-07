@@ -1,36 +1,43 @@
-import React, { useState } from "react";
+import React from "react";
 import coinIcon from "../assets/coin.png";
 import filterIcon from "../assets/filter.png";
 import mapicon from "../assets/mapicon.png";
 import avatarFallback from "../assets/avatar.jpg";
-import ProfileModal from "./ProfileModal";
+import { useNavigate } from "react-router-dom";
 
 export default function TopBar({ score, visitedCount, totalPois, avatar, city }) {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // --- NORMALIZAR AVATAR ---
+  // avatar da BD = "avatar_1_p.png"
+  const avatarUrl = avatar
+    ? `/assets/avatars/${avatar}` // monta o path correto
+    : avatarFallback;
 
   return (
     <div className="relative">
       {/* Barra principal */}
-      <div className="bg-[#FFF4D6]/20 p-2 rounded-b-3xl w-full border-b border-b-5 border-b-black/20">
+      <div className="bg-[#FFF4D6] p-2 rounded-b-3xl w-full border-b border-b-5 border-b-black/20">
         <div
           className="flex items-center justify-between 
                      bg-gradient-to-b from-[#FFF4D6] to-[#FBCB6D] 
                      border-4 border-[#5A2C0A] rounded-3xl px-4 py-2"
         >
-          {/* Coluna 1 - Avatar (clicável) */}
+          {/* Avatar */}
           <div
-            className="p-[2px] bg-[#FBCB6D] border-[#8B3A1A] border-3 rounded-2xl cursor-pointer hover:scale-105 transition"
-            onClick={() => setIsProfileOpen(true)}
+            className="p-[2px] bg-[#FBCB6D] border-[#8B3A1A] border-3 rounded-2xl 
+                       cursor-pointer hover:scale-105 transition"
+            onClick={() => navigate("/profile")}
             title="Ver perfil"
           >
             <img
-              src={avatar || avatarFallback}
+              src={avatarUrl}
               alt="Avatar"
               className="w-12 h-12 rounded-xl border-2 border-[#8B3A1A] object-cover"
             />
           </div>
 
-          {/* Coluna 2 - Moedas */}
+          {/* Moedas */}
           <div className="relative p-[2px] bg-[#FBCB6D] border-[#5A2C0A] border-3 rounded-3xl">
             <img
               src={coinIcon}
@@ -38,18 +45,14 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
               className="absolute -top-3 -left-3 w-10 h-10 drop-shadow-md"
             />
             <div
-              className="flex items-center gap-2 
-                         bg-[#8B3A1A] 
-                         font-title text-white 
-                         pl-12 pr-3 py-1
-                         rounded-3xl 
-                         shadow-inner"
+              className="flex items-center gap-2 bg-[#8B3A1A] font-title text-white 
+                         pl-12 pr-3 py-1 rounded-3xl shadow-inner"
             >
               <span>{score}</span>
             </div>
           </div>
 
-          {/* Coluna 3 - Progresso no mapa */}
+          {/* Progresso */}
           <div className="relative p-[2px] bg-[#FBCB6D] border-[#8B3A1A] border-3 rounded-3xl">
             <img
               src={mapicon}
@@ -57,12 +60,8 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
               className="absolute -top-3 -left-3 w-10 h-10 drop-shadow-md"
             />
             <div
-              className="flex items-center gap-2 
-                         bg-[#8B3A1A] 
-                         font-title text-white 
-                         pl-12 pr-3 py-1
-                         rounded-3xl 
-                         shadow-inner"
+              className="flex items-center gap-2 bg-[#8B3A1A] font-title text-white 
+                         pl-12 pr-3 py-1 rounded-3xl shadow-inner"
             >
               <span>
                 {visitedCount}/{totalPois}
@@ -70,7 +69,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
             </div>
           </div>
 
-          {/* Coluna 4 - Botão filtro */}
+          {/* Filtro */}
           <button title="Filtros">
             <img
               src={filterIcon}
@@ -85,9 +84,6 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
           Localização: {city || "—"}
         </div>
       </div>
-
-      {/* Modal de Perfil */}
-      {isProfileOpen && <ProfileModal setIsOpen={setIsProfileOpen} />}
     </div>
   );
 }
