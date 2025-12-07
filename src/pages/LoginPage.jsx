@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { setUser } from "../features/userSlice";
 import { useLoginUserMutation } from "../features/authApi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-//import coin from "../assets/coin.png";
+
 import background from "../assets/background.png";
 
 export default function LoginPage() {
@@ -15,29 +15,6 @@ export default function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
-
-  // ✅ Verifica se já existe utilizador guardado e restaura automaticamente
-  useEffect(() => {
-  async function checkSession() {
-    try {
-      const res = await fetch("https://api.hakkencity.com/api/users/me", {
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (data?.user) {
-        dispatch(setUser(data.user));
-        localStorage.setItem("hakkenUser", JSON.stringify(data.user));
-        navigate("/map");
-      }
-    } catch (err) {
-      console.log("Sem sessão ativa");
-    }
-  }
-
-  checkSession();
-}, [dispatch, navigate]);
-
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,13 +27,10 @@ export default function LoginPage() {
     try {
       const res = await loginUser(form).unwrap();
 
-      // guarda utilizador no Redux
-      const userData = res.user || { username: form.username };
-      dispatch(setUser(userData));
+      // Guarda o user completo que veio do backend
+      dispatch(setUser(res.user));
 
-      // ✅ guarda também no localStorage
-      localStorage.setItem("hakkenUser", JSON.stringify(userData));
-
+      // Vai para o mapa
       navigate("/map");
     } catch (err) {
       setError(err?.data?.message || "Credenciais inválidas");
@@ -69,11 +43,13 @@ export default function LoginPage() {
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="w-full max-w-sm bg-gradient-to-b from-gold-20 to-gold-60 rounded-3xl shadow-xl p-6 border-4 border-marron-100">
-        <h1 className="text-2xl flex items-center justify-center font-title text-marron-100 mb-6">
+
+        <h1 className="text-2xl text-center font-title text-marron-100 mb-6">
           A Caminho do Tesouro
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
           <input
             type="text"
             name="username"
@@ -124,6 +100,7 @@ export default function LoginPage() {
             Esqueceu a senha?
           </Link>
         </div>
+
       </div>
     </div>
   );

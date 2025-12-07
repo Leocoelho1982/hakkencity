@@ -8,41 +8,43 @@ import { motion } from "framer-motion";
 
 import mapBg from "../assets/background.png";
 
-// FULL BODY
-import flint from "../assets/avatars/avatar_1.png";
-import aria from "../assets/avatars/avatar_2.jpg";
+// Avatares corpo inteiro
+import flintFull from "../assets/avatars/avatar_1.png";
+import ariaFull from "../assets/avatars/avatar_2.jpg";
 
-// HEAD ICONS (para gravar no backend)
+// Avatares HEAD (para gravar)
 import flintHead from "../assets/avatars/avatar_1_p.png";
 import ariaHead from "../assets/avatars/avatar_2_p.jpg";
 
 export default function RegisterPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
+  // Avatares disponíveis
   const avatars = [
     {
       id: "flint",
       name: "Flint",
       description: "O Explorador Destemido",
-      img: flint,        // corpo inteiro (para mostrar)
-      head: flintHead,   // cabeça (para gravar)
+      full: flintFull,
+      head: flintHead,
     },
     {
       id: "aria",
       name: "Aria",
       description: "A Capitã Aventureira",
-      img: aria,         // corpo inteiro
-      head: ariaHead,    // cabeça
+      full: ariaFull,
+      head: ariaHead,
     },
   ];
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
 
   const [form, setForm] = useState({
     username: "",
     password: "",
     confirmPassword: "",
-    image: "", // grava APENAS a cabeça
+    image: "",       // avatar head para enviar ao backend
+    fullImage: "",   // apenas para preview visual
   });
 
   const [error, setError] = useState("");
@@ -64,8 +66,13 @@ export default function RegisterPage() {
       return setError("Escolhe primeiro o teu Avatar");
 
     try {
-      const res = await registerUser(form).unwrap();
-      dispatch(setUser(res.user || { username: form.username, image: form.image }));
+      const res = await registerUser({
+        username: form.username,
+        password: form.password,
+        image: form.image, // ← avatar HEAD
+      }).unwrap();
+
+      dispatch(setUser(res.user));
       navigate("/map");
     } catch (err) {
       setError(err?.data?.message || "Erro no registo");
@@ -81,10 +88,11 @@ export default function RegisterPage() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-sm bg-[#FFF4D4] rounded-3xl shadow-2xl border-4 border-marron-100 p-7 relative overflow-hidden"
+        className="w-full max-w-sm bg-[#FFF4D4] rounded-3xl shadow-2xl border-4 border-marron-100 p-7"
       >
 
-        <h1 className="text-3xl text-center font-title text-marron-100 drop-shadow-md">
+        {/* TITLE */}
+        <h1 className="text-3xl text-center font-title text-marron-100">
           Novo Explorador
         </h1>
 
@@ -99,26 +107,26 @@ export default function RegisterPage() {
               key={av.id}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.92 }}
-              onClick={() => setForm({ ...form, image: av.head })} // ← grava só a cabeça
+              onClick={() =>
+                setForm({ ...form, image: av.head, fullImage: av.full })
+              }
               className={`
-                rounded-2xl border-4 bg-white shadow-lg p-3 transition-all w-36 h-60 flex flex-col items-center justify-start
-                ${form.image === av.head
-                  ? "border-yellow-500 shadow-yellow-400 shadow-2xl"
-                  : "border-transparent opacity-85 hover:opacity-100"
+                rounded-xl border-4 bg-white shadow-lg p-3 transition-all w-36 h-56 flex flex-col items-center
+                ${
+                  form.image === av.head
+                    ? "border-yellow-500 shadow-yellow-400 shadow-xl"
+                    : "border-transparent opacity-85 hover:opacity-100"
                 }
               `}
             >
-              {/* Full-body */}
               <img
-                src={av.img}
+                src={av.full}
                 alt={av.name}
-                className="w-full h-40 object-contain drop-shadow-md"
+                className="w-full h-36 object-contain drop-shadow-md"
               />
-
               <p className="text-center font-semibold text-marron-100 mt-1 text-sm">
                 {av.name}
               </p>
-
               <p className="text-center text-xs text-marron-80 leading-tight">
                 {av.description}
               </p>
@@ -135,10 +143,11 @@ export default function RegisterPage() {
             placeholder="Username"
             value={form.username}
             onChange={handleChange}
-            className="block w-full rounded-full border-2 border-marron-100 bg-white/80 backdrop-blur-sm h-[48px] px-4 focus:ring-2 focus:ring-yellow-400 outline-none"
+            className="block w-full rounded-full border-2 border-marron-100 bg-white h-[48px] px-4"
             required
           />
 
+          {/* PASSWORD */}
           <div className="relative">
             <input
               type={showPass ? "text" : "password"}
@@ -146,7 +155,7 @@ export default function RegisterPage() {
               placeholder="Palavra Passe"
               value={form.password}
               onChange={handleChange}
-              className="block w-full rounded-full border-2 border-marron-100 bg-white/80 h-[48px] px-4 focus:ring-2 focus:ring-yellow-400 outline-none"
+              className="block w-full rounded-full border-2 border-marron-100 bg-white h-[48px] px-4"
               required
             />
             <button
@@ -158,6 +167,7 @@ export default function RegisterPage() {
             </button>
           </div>
 
+          {/* CONFIRM */}
           <div className="relative">
             <input
               type={showConfirm ? "text" : "password"}
@@ -165,7 +175,7 @@ export default function RegisterPage() {
               placeholder="Confirmar Palavra Passe"
               value={form.confirmPassword}
               onChange={handleChange}
-              className="block w-full rounded-full border-2 border-marron-100 bg-white/80 h-[48px] px-4 focus:ring-2 focus:ring-yellow-400 outline-none"
+              className="block w-full rounded-full border-2 border-marron-100 bg-white h-[48px] px-4"
               required
             />
             <button
@@ -181,7 +191,7 @@ export default function RegisterPage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-red-600 text-sm text-center font-semibold"
+              className="text-red-600 text-sm text-center"
             >
               {error}
             </motion.p>
@@ -189,8 +199,8 @@ export default function RegisterPage() {
 
           <motion.button
             type="submit"
-            disabled={isLoading}
             whileTap={{ scale: 0.95 }}
+            disabled={isLoading}
             className="w-full bg-gradient-to-b from-[#E86A46] to-[#D3563A] text-white font-title text-xl py-3 rounded-full shadow-lg hover:brightness-110 transition disabled:opacity-50"
           >
             {isLoading ? "A criar conta..." : "Começar Aventura!"}
@@ -203,6 +213,7 @@ export default function RegisterPage() {
             Entrar
           </Link>
         </div>
+
       </motion.div>
     </div>
   );

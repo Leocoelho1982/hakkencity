@@ -1,52 +1,67 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import { setUser, logoutUser } from "./features/userSlice";
 import { useLazyGetSessionQuery } from "./features/authApi";
-import { setUser } from "./features/userSlice";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import LoadingScreen from "./pages/LoadingScreen";
+
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import PrivateRoute from "./pages/PrivateRoute";
 import MapPage from "./pages/MapPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import ARCollect from "./pages/ARCollect";
-
+import PrivateRoute from "./pages/PrivateRoute";
 
 export default function App() {
   const dispatch = useDispatch();
-  const [getSession] = useLazyGetSessionQuery();
+  const [checkSession, { isLoading }] = useLazyGetSessionQuery();
+
+  const [booting, setBooting] = useState(true); 
+  // controla o estado inicial enquanto a sessão carrega
 
   useEffect(() => {
-    const checkAuth = async () => {
+    async function loadSession() {
       try {
-        const { user } = await getSession().unwrap();
-        dispatch(setUser(user));
+        const res = await checkSession().unwrap();  // GET /users/me
+        dispatch(setUser(res.user));                // user completo
       } catch {
-        console.log("Sessão não encontrada");
+        dispatch(logoutUser());                     // sessão inválida
+      } finally {
+        setBooting(false);                          // terminou o boot
       }
-    };
-    checkAuth();
-  }, [dispatch, getSession]);
+    }
 
+    loadSession();
+  }, [dispatch, checkSession]);
 
-  function handleCollect(poiId) {
-  console.log("Recolheu via AR:", poiId);
-}
-
+  // Enquanto o App está a validar a sessão, aparece um loading simples
+  if (booting || isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center text-marron-100 font-title">
+        A carregar...
+      </div>
+    );
+  }
 
   return (
     <Routes>
-      <Route path="/" element={<LoadingScreen />} />
+
+      {/* LOGIN */}
       <Route path="/login" element={<LoginPage />} />
+
+      {/* REGISTO */}
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route element={<PrivateRoute />}>
-        <Route path="/map" element={<MapPage />} />
-        <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
+      {/* ROTA PRIVADA */}
+      <Route
+        path="/map"
+        element={
+          <PrivateRoute>
+            <MapPage />
+          </PrivateRoute>
+        }
+      />
 
-      </Route>
-
-      <Route path="*" element={<NotFoundPage />} />
+      {/* fallback */}
+      <Route path="*" element={<Navigate to="/map" />} />
     </Routes>
   );
 }

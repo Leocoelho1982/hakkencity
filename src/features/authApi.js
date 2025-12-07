@@ -2,12 +2,21 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
   reducerPath: "authApi",
+
   baseQuery: fetchBaseQuery({
-    
     baseUrl: "https://api.hakkencity.com/api/users",
-    credentials: "include", // garante que todos enviam cookies
+
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().user.token;
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
+
   endpoints: (builder) => ({
+    // LOGIN
     loginUser: builder.mutation({
       query: (credentials) => ({
         url: "/login",
@@ -15,21 +24,24 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
+
+    // REGISTER
     registerUser: builder.mutation({
-      query: (newUser) => ({
+      query: (userData) => ({
         url: "/register",
         method: "POST",
-        body: newUser,
+        body: userData,
       }),
     }),
+
+    // SESSION (/me)
     getSession: builder.query({
       query: () => "/me",
     }),
-    logoutUser: builder.mutation({
-      query: () => ({
-        url: "/logout",
-        method: "POST",
-      }),
+
+    // PROFILE
+    getProfile: builder.query({
+      query: () => "/profile",
     }),
   }),
 });
@@ -38,7 +50,6 @@ export const {
   useLoginUserMutation,
   useRegisterUserMutation,
   useGetSessionQuery,
-  useLazyGetSessionQuery,   // <-- adiciona isto
-  useLogoutUserMutation,
+  useLazyGetSessionQuery,
+  useGetProfileQuery,
 } = authApi;
-

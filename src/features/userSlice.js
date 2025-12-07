@@ -3,11 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   id: null,
   username: null,
-  image: null, // 👈 novo campo
+  image: null,
+  token: null,
   isAuthenticated: false,
-  position: null,
-  heading: null,
-  score: 0,
 };
 
 const userSlice = createSlice({
@@ -15,33 +13,35 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.id = action.payload.id;
-      state.username = action.payload.username;
-      state.image = action.payload.image; // 👈 agora guarda a imagem do BD
+      const { id, username, image, token } = action.payload;
+
+      state.id = id || null;
+      state.username = username || null;
+      state.image = image || null;
+      state.token = token || null;
       state.isAuthenticated = true;
     },
-    logout: (state) => {
+
+    logoutUser: (state) => {
       state.id = null;
       state.username = null;
-      state.image = null; // 👈 limpa também
+      state.image = null;
+      state.token = null;
       state.isAuthenticated = false;
-      state.position = null;
-      state.heading = null;
-      state.score = 0;
+
+      localStorage.removeItem("hakkenUser");
     },
-    setPosition: (state, action) => {
-      state.position = action.payload;
-    },
-    setHeading: (state, action) => {
-      state.heading = action.payload;
-    },
-    addScore: (state, action) => {
-      state.score += action.payload;
+
+    restoreUser: (state, action) => {
+      const { id, username, image, token } = action.payload;
+      state.id = id || null;
+      state.username = username || null;
+      state.image = image || null;
+      state.token = token || null;
+      state.isAuthenticated = true;
     },
   },
 });
 
-export const { setUser, logout, setPosition, setHeading, addScore } =
-  userSlice.actions;
-
+export const { setUser, logoutUser, restoreUser } = userSlice.actions;
 export default userSlice.reducer;
