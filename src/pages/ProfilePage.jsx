@@ -1,10 +1,12 @@
 /* eslint-disable */
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLogoutUserMutation } from "../features/authApi";
 import { logout } from "../features/userSlice";
 import { useNavigate } from "react-router-dom";
 import { FiLogOut, FiArrowLeft } from "react-icons/fi";
 import { motion } from "framer-motion";
+import avatarFallback from "../assets/avatar.jpg";   // ✅ IMPORTAR
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
@@ -14,7 +16,8 @@ export default function ProfilePage() {
   const username = useSelector((state) => state.user.username);
   const avatar = useSelector((state) => state.user.image);
 
-  const avatarUrl = image || avatarFallback;
+  // ✅ CORREÇÃO AQUI
+  const avatarUrl = avatar ? `/assets/avatars/${avatar}` : avatarFallback;
 
   async function handleLogout() {
     try {
@@ -26,6 +29,7 @@ export default function ProfilePage() {
     localStorage.clear();
     navigate("/login");
   }
+
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#F8E6B8] to-[#F4C87C] flex flex-col items-center pt-10 px-6">
