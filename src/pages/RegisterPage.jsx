@@ -69,7 +69,7 @@ export default function RegisterPage() {
       const res = await registerUser({
         username: form.username,
         password: form.password,
-        image: form.imageFile, // ← avatar HEAD
+        image: form.image, // ← avatar HEAD
       }).unwrap();
 
       console.log(res)
@@ -113,7 +113,6 @@ export default function RegisterPage() {
                 setForm({
                   ...form,
                   image: av.head,               // caminho completo (para comparar)
-                  imageFile: av.head.split("/").pop(), // só o ficheiro (para o backend)
                   fullImage: av.full            // preview
                 })
               }
