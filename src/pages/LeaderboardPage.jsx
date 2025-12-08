@@ -16,7 +16,7 @@ export default function LeaderboardPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#FFF4D4] to-[#F6C468] px-6 pt-10 flex flex-col items-center">
+    <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 px-6 pt-10 flex flex-col items-center">
 
       {/* VOLTAR */}
       <button

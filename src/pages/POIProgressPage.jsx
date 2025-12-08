@@ -23,7 +23,7 @@ export default function POIProgressPage() {
   const progressPercent = Math.round((visitedCount / total) * 100);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#FFF4D6] to-[#F6C468] p-6 pt-14">
+    <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 p-6 pt-14">
       
       {/* BOTÃO DE VOLTAR */}
       <button
@@ -44,9 +44,24 @@ export default function POIProgressPage() {
 
 
       {/* TÍTULO */}
-      <h1 className="text-3xl font-title text-center text-marron-100 mb-6">
+      <motion.div
+                    initial={{ opacity: 0, y: -15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="
+                        bg-[#E9C27D] 
+                        text-[#5A2C0A] 
+                        font-title 
+                        text-2xl 
+                        text-center 
+                        px-6 py-2 
+                        rounded-xl 
+                        shadow-inner 
+                        border-b-[3px] border-[#C89B4C] 
+                        mb-4 mt-6
+                    "
+                    >
         Progresso dos POIs
-      </h1>
+      </motion.div>
 
       {/* PROGRESSO GERAL */}
       <div className="w-full max-w-md mx-auto bg-white border-4 border-yellow-300 rounded-2xl p-5 shadow-xl">

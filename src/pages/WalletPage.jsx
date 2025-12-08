@@ -13,7 +13,7 @@ export default function WalletPage() {
   const score = useSelector((state) => state.user.score);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#FFF4D4] to-[#F6C468] px-6 
+    <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 px-6 
                     flex flex-col items-center pt-16 relative">
 
       {/* VOLTAR */}
@@ -35,14 +35,24 @@ export default function WalletPage() {
 
 
       {/* TÍTULO */}
-      <motion.h1
-        initial={{ opacity: 0, y: -15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-3xl font-title text-marron-100 mb-4 text-center"
-      >
+      <motion.div
+              initial={{ opacity: 0, y: -15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="
+                  bg-[#E9C27D] 
+                  text-[#5A2C0A] 
+                  font-title 
+                  text-2xl 
+                  text-center 
+                  px-6 py-2 
+                  rounded-xl 
+                  shadow-inner 
+                  border-b-[3px] border-[#C89B4C] 
+                  mb-4 mt-6
+              "
+              >
         Tesouro do Explorador
-      </motion.h1>
+      </motion.div>
 
       {/* COFRE ANIMADO */}
       <motion.div
