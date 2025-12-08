@@ -15,6 +15,7 @@ import ApiTest from "./pages/ApiTest";
 import LogoutPage from "./pages/LogoutPage";
 import WalletPage from "./pages/WalletPage";
 import POIProgressPage from "./pages/POIProgressPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 
 
 export default function App() {
@@ -60,7 +61,7 @@ export default function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/wallet" element={<WalletPage />} />
         <Route path="/pois" element={<POIProgressPage />} />
-
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
 
       </Route>
 

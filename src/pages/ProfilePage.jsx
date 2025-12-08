@@ -37,12 +37,21 @@ export default function ProfilePage() {
 
       {/* Botão de Voltar */}
       <button
-        onClick={() => navigate("/map")}
-        className="absolute left-4 top-4 flex items-center gap-2 text-marron-100 font-bold bg-white/80 px-4 py-2 rounded-full shadow-md hover:bg-white transition"
-      >
-        <FiArrowLeft size={20} />
-        Voltar
-      </button>
+  onClick={() => navigate("/map")}
+  className="
+    absolute top-4 left-4
+    w-11 h-11
+    rounded-full
+    bg-[#F8DCA0]
+    border-[3px] border-[#8B5E3C]
+    flex items-center justify-center
+    shadow-[0_3px_0px_#C89B4C]
+    hover:scale-110 transition
+  "
+>
+  <FiArrowLeft size={20} className="text-[#5A2C0A]" />
+</button>
+
 
       {/* CARD PRINCIPAL DO PERFIL */}
       <motion.div

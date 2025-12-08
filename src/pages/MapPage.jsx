@@ -10,6 +10,7 @@ import FlyToUser from "../components/FlyToUser";
 import PlayerHeadingCone from "../components/PlayerHeadingCone";
 import CompassControl from "../components/CompassControl";
 import CenterOnMe from "../components/CenterOnMe";
+import LeaderboardButton from "../components/LeaderboardButton";
 
 import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
@@ -121,6 +122,8 @@ export default function MapPage() {
               requestPermission={requestPermission}
             />
             <CenterOnMe position={position} />
+            <LeaderboardButton />
+
 
             {/* POIs */}
             {POIS.map((poi) => (
