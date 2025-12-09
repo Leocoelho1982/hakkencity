@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLazyGetSessionQuery } from "./features/authApi";
-import { setUser, logoutUser } from "./features/userSlice";
+import { setUser, logout } from "./features/userSlice";
 import { Routes, Route } from "react-router-dom";
 
 import LoadingScreen from "./pages/LoadingScreen";
@@ -36,7 +36,7 @@ export default function App() {
         dispatch(setUser(res.user));
       } catch (err) {
         console.log("❌ Sessão não encontrada:", err);
-        dispatch(logoutUser()); // 👈 ESSENCIAL
+        dispatch(logout()); // 👈 ESSENCIAL
       }
     };
 
