@@ -1,0 +1,77 @@
+import { Link } from "react-router-dom";
+import {
+  FiUsers,
+  FiMap,
+  FiMapPin,
+  FiGrid,
+  FiLogOut,
+} from "react-icons/fi";
+
+export default function AdminDashboard() {
+  const menu = [
+    {
+      name: "Utilizadores",
+      icon: <FiUsers className="h-5 w-5" />,
+      to: "/admin/users",
+    },
+    {
+      name: "POIs",
+      icon: <FiMapPin className="h-5 w-5" />,
+      to: "/admin/pois",
+    },
+    {
+      name: "Cidades",
+      icon: <FiMap className="h-5 w-5" />,
+      to: "/admin/cities",
+    },
+    {
+      name: "Zonas",
+      icon: <FiGrid className="h-5 w-5" />,
+      to: "/admin/zones",
+    },
+  ];
+
+  const logout = () => {
+    localStorage.removeItem("adminToken");
+    window.location.href = "/admin/login";
+  };
+
+  return (
+    <div className="min-h-screen flex bg-gray-100">
+      
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-md p-6 flex flex-col">
+        <h2 className="text-xl font-bold mb-6">Administração</h2>
+
+        <nav className="flex-1 space-y-2">
+          {menu.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-200 transition"
+            >
+              {item.icon}
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 mt-6 text-red-600 p-3 hover:bg-red-100 rounded-lg transition"
+        >
+          <FiLogOut className="h-5 w-5" />
+          Terminar sessão
+        </button>
+      </aside>
+
+      {/* Conteúdo */}
+      <main className="flex-1 p-10">
+        <h1 className="text-3xl font-bold mb-6">Painel Administrativo</h1>
+        <p className="text-gray-700">
+          Escolha uma opção no menu à esquerda para gerir os dados do jogo.
+        </p>
+      </main>
+    </div>
+  );
+}

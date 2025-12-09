@@ -16,6 +16,11 @@ import LogoutPage from "./pages/LogoutPage";
 import WalletPage from "./pages/WalletPage";
 import POIProgressPage from "./pages/POIProgressPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminRoute from "./pages/admin/AdminRoute";
+import UsersPage from "./pages/admin/UsersPage";
+import CitiesPage from "./pages/admin/CitiesPage";
 
 
 export default function App() {
@@ -62,6 +67,14 @@ export default function App() {
         <Route path="/wallet" element={<WalletPage />} />
         <Route path="/pois" element={<POIProgressPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+
+      </Route>
+
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<UsersPage />} />
+        <Route path="/admin/cities" element={<CitiesPage />} />
 
       </Route>
 
