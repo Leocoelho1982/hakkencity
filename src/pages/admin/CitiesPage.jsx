@@ -16,7 +16,7 @@ export default function CitiesPage() {
 
   const [editingId, setEditingId] = useState(null);
 
-  const API = "http://localhost:5009/api/cities";
+  const API = "https://api.hakkencity.com/api/cities";
   const token = localStorage.getItem("adminToken");
 
   // GET cities

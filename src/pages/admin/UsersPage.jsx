@@ -8,7 +8,7 @@ export default function UsersPage() {
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
-  const API = "http://localhost:5009/api/users";
+  const API = "https://api.hakkencity.com/api/users";
 
   // ---------------------
   // GET USERS
