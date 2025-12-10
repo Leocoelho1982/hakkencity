@@ -1,15 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useMusic } from "../context/MusicProvider";
+import EffectParticles from "../components/EffectParticles";
 
 export default function ARCollect({ onCollected }) {
   const navigate = useNavigate();
   const { poiId } = useParams();
+  const { playCoin, sfxMuted } = useMusic();
+  const [showParticles, setShowParticles] = useState(false);
 
   // Receber mensagens vindas do iframe (AR)
   useEffect(() => {
     function onMessage(ev) {
       if (ev.data?.type === "COLLECT_COIN") {
         console.log("Moeda recolhida!", poiId);
+
+        // Tocar som de moeda
+        playCoin();
+
+        // Mostrar confetti se VFX não estiver desligado
+        if (!sfxMuted) {
+          setShowParticles(true);
+        }
 
         if (onCollected) onCollected(poiId);
 
@@ -20,7 +32,7 @@ export default function ARCollect({ onCollected }) {
 
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [navigate, onCollected, poiId]);
+  }, [navigate, onCollected, poiId, playCoin, sfxMuted]);
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
@@ -54,6 +66,11 @@ export default function ARCollect({ onCollected }) {
           border: "none",
         }}
       />
+
+      {/* Confetti quando moeda é recolhida */}
+      {showParticles && (
+        <EffectParticles onComplete={() => setShowParticles(false)} />
+      )}
     </div>
   );
 }

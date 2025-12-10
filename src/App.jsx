@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useLazyGetSessionQuery } from "./features/authApi";
 import { setUser } from "./features/userSlice";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { MusicProvider } from "./context/MusicProvider";
 import LoadingScreen from "./pages/LoadingScreen";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -51,34 +52,36 @@ export default function App() {
 
 
   return (
-    <Routes>
-      <Route path="/" element={<LoadingScreen />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/test-api" element={<ApiTest />} />
-      <Route path="/logout" element={<LogoutPage />} />
+    <MusicProvider>
+      <Routes>
+        <Route path="/" element={<LoadingScreen />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/test-api" element={<ApiTest />} />
+        <Route path="/logout" element={<LogoutPage />} />
 
 
 
-      <Route element={<PrivateRoute />}>
-        <Route path="/map" element={<MapPage />} />
-        <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/wallet" element={<WalletPage />} />
-        <Route path="/pois" element={<POIProgressPage />} />
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/ar/:poiId" element={<ARCollect onCollected={handleCollect} />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/pois" element={<POIProgressPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
 
-      </Route>
+        </Route>
 
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route element={<AdminRoute />}>
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/users" element={<UsersPage />} />
-        <Route path="/admin/cities" element={<CitiesPage />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<UsersPage />} />
+          <Route path="/admin/cities" element={<CitiesPage />} />
 
-      </Route>
+        </Route>
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </MusicProvider>
   );
 }

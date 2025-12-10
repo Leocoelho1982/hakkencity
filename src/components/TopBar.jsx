@@ -1,13 +1,17 @@
 /* eslint-disable */
-import React from "react";
+import React, { useState } from "react";
 import coinIcon from "../assets/coin.png";
 import filterIcon from "../assets/filter.png";
 import mapicon from "../assets/mapicon.png";
 import avatarFallback from "../assets/avatar.jpg";
 import { useNavigate } from "react-router-dom";
+import SettingsModal from "./SettingsModal";
+import { useMusic } from "../context/MusicProvider";
 
 export default function TopBar({ score, visitedCount, totalPois, avatar, city }) {
   const navigate = useNavigate();
+  const [showSettings, setShowSettings] = useState(false);
+  const { playClick } = useMusic();
 
   const avatarUrl = avatar || avatarFallback;
 
@@ -75,7 +79,13 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
           </div>
 
           {/* Filtro */}
-          <button title="Filtros">
+          <button 
+            title="Configurações"
+            onClick={() => {
+              playClick();
+              setShowSettings(true);
+            }}
+          >
             <img
               src={filterIcon}
               alt="Filtro"
@@ -89,6 +99,12 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city })
           Localização: {city || "—"}
         </div>
       </div>
+
+      {/* Modal de Configurações */}
+      <SettingsModal 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)} 
+      />
     </div>
   );
 }

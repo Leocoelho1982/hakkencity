@@ -1,17 +1,10 @@
 /* eslint-disable */
-import { useCallback } from "react";
 import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
 
 export default function EffectParticles({ onComplete }) {
-  const particlesInit = useCallback(async engine => {
-    await loadFull(engine);
-  }, []);
-
   return (
     <Particles
       id="coinExplosion"
-      init={particlesInit}
       options={{
         autoPlay: true,
         fullScreen: { enable: true, zIndex: 9999 },
@@ -33,7 +26,9 @@ export default function EffectParticles({ onComplete }) {
             enable: true,
             speed: 6,
             direction: "none",
-            outModes: "destroy"
+            outModes: {
+              default: "destroy"
+            }
           }
         },
         emitters: {

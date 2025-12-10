@@ -9,7 +9,7 @@ import coinsIcon from "../assets/coins.png";
 import ampliarIcon from "../assets/bt_ampliar.png";
 import iconClose from "../assets/bt_close.png";
 import EffectParticles from "../components/EffectParticles";
-import { coinSound } from "../utils/sound";
+import { useMusic } from "../context/MusicProvider";
 
 
 // Criar ícone do POI
@@ -33,6 +33,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const [showParticles, setShowParticles] = useState(false);
+  const { playCoin, playClick, sfxMuted } = useMusic();
 
 
   // Calcular distância
@@ -65,7 +66,10 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
     ? createPortal(
         <div
           className="fixed inset-0 bg-black/60 z-[999] flex justify-center overflow-y-auto"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            playClick();
+            setOpen(false);
+          }}
         >
           <div
             className="bg-gradient-to-b from-[#FFF2CC] to-[#F2C97D] rounded-3xl p-6 w-xl m-4 border-[6px] border-[#8B5E3C] shadow-2xl relative my-10 max-h-[90vh] overflow-y-auto"
@@ -73,7 +77,10 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
           >
             {/* Fechar */}
             <button
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                playClick();
+                setOpen(false);
+              }}
               className="absolute top-3 right-3 hover:scale-110 transition"
             >
               <img src={iconClose} className="h-7 w-7" alt="Fechar" />
@@ -149,8 +156,10 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
             {canCollect ? (
               <button
                 onClick={() => {
-                  coinSound.play();       // 🔊 som
-                  setShowParticles(true); // 🎉 partículas
+                  playCoin();             // 🔊 som
+                  if (!sfxMuted) {
+                    setShowParticles(true); // 🎉 partículas (só se VFX não estiver desligado)
+                  }
                   onCollect(poi);
                   setOpen(false);
                 }}
@@ -180,15 +189,21 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
   const lightbox = lightboxOpen
     ? createPortal(
         <div
-          className="fixed inset-0 bg-black/80 z-[1000] flex items-center justify-center"
-          onClick={() => setLightboxOpen(false)}
+        className="fixed inset-0 bg-black/80 z-[1000] flex items-center justify-center"
+        onClick={() => {
+          playClick();
+          setLightboxOpen(false);
+        }}
         >
           <div
             className="relative w-full max-w-2xl mx-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setLightboxOpen(false)}
+            onClick={() => {
+              playClick();
+              setLightboxOpen(false);
+            }}
               className="absolute top-4 right-4 bg-white/90 rounded-full p-2 shadow-xl hover:scale-110 transition"
             >
               <img src={iconClose} className="h-8 w-8" alt="Fechar" />

@@ -108,3 +108,8 @@ body {
   border-right: 10px solid transparent;
   border-top: 14px solid #8B3A1A; /* marrom */
 }
+
+/* Ocultar atributo do Leaflet */
+.leaflet-control-attribution {
+  display: none !important;
+}

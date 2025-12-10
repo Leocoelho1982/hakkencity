@@ -83,22 +83,21 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="h-screen w-screen bg-cover bg-center flex items-center justify-center px-4"
-      style={{ backgroundImage: `url(${mapBg})` }}
+      className="min-h-screen w-screen bg-gradient-to-b from-[#E8F6FF] via-[#F5F0FF] to-[#FFF8E6] flex items-center justify-center px-4"
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-sm bg-[#FFF4D4] rounded-3xl shadow-2xl border-4 border-marron-100 p-7"
+        className="w-full max-w-sm bg-white/90 backdrop-blur-sm rounded-3xl shadow-[0_20px_45px_rgba(0,0,0,0.12)] border-[3px] border-[#E4D5BB] p-7"
       >
 
         {/* TITLE */}
-        <h1 className="text-3xl text-center font-title text-marron-100">
+        <h1 className="text-3xl text-center font-title text-[#4A3827]">
           Novo Explorador
         </h1>
 
-        <p className="text-center text-marron-80 text-sm mt-1 mb-4 italic">
+        <p className="text-center text-[#6A5C4A] text-sm mt-1 mb-4 italic">
           Escolhe o teu herói e começa a aventura
         </p>
 
@@ -117,11 +116,11 @@ export default function RegisterPage() {
                 })
               }
               className={`
-                rounded-xl border-4 bg-white shadow-lg p-3 transition-all w-36 h-56 flex flex-col items-center
+                rounded-xl border-[3px] bg-white shadow-lg p-3 transition-all w-36 h-56 flex flex-col items-center
                 ${
                   form.image === av.head
-                    ? "border-yellow-500 shadow-yellow-400 shadow-xl"
-                    : "border-transparent opacity-85 hover:opacity-100"
+                    ? "border-[#6FA3D6] shadow-[0_10px_20px_rgba(111,163,214,0.35)]"
+                    : "border-[#E4D5BB] opacity-85 hover:opacity-100"
                 }
               `}
             >
@@ -130,10 +129,10 @@ export default function RegisterPage() {
                 alt={av.name}
                 className="w-full h-36 object-contain drop-shadow-md"
               />
-              <p className="text-center font-semibold text-marron-100 mt-1 text-sm">
+              <p className="text-center font-semibold text-[#4A3827] mt-1 text-sm">
                 {av.name}
               </p>
-              <p className="text-center text-xs text-marron-80 leading-tight">
+              <p className="text-center text-xs text-[#6A5C4A] leading-tight">
                 {av.description}
               </p>
             </motion.button>
@@ -150,7 +149,7 @@ export default function RegisterPage() {
             placeholder="Username"
             value={form.username}
             onChange={handleChange}
-            className="block w-full rounded-full border-2 border-marron-100 bg-white h-[48px] px-4"
+            className="block w-full rounded-2xl border-2 border-[#D9C8AA] bg-white/90 h-[48px] px-4 shadow-inner focus:border-[#6FA3D6]"
             required
           />
 
@@ -162,13 +161,13 @@ export default function RegisterPage() {
               placeholder="Palavra Passe"
               value={form.password}
               onChange={handleChange}
-              className="block w-full rounded-full border-2 border-marron-100 bg-white h-[48px] px-4"
+              className="block w-full rounded-2xl border-2 border-[#D9C8AA] bg-white/90 h-[48px] px-4 shadow-inner focus:border-[#6FA3D6]"
               required
             />
             <button
               type="button"
               onClick={() => setShowPass(!showPass)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-marron-100"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6A5C4A]"
             >
               {showPass ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </button>
@@ -182,13 +181,13 @@ export default function RegisterPage() {
               placeholder="Confirmar Palavra Passe"
               value={form.confirmPassword}
               onChange={handleChange}
-              className="block w-full rounded-full border-2 border-marron-100 bg-white h-[48px] px-4"
+              className="block w-full rounded-2xl border-2 border-[#D9C8AA] bg-white/90 h-[48px] px-4 shadow-inner focus:border-[#6FA3D6]"
               required
             />
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-marron-100"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6A5C4A]"
             >
               {showConfirm ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </button>
@@ -208,7 +207,7 @@ export default function RegisterPage() {
             type="submit"
             whileTap={{ scale: 0.95 }}
             disabled={isLoading}
-            className="w-full bg-gradient-to-b from-[#E86A46] to-[#D3563A] text-white font-title text-xl py-3 rounded-full shadow-lg hover:brightness-110 transition disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-[#7CC6A5] to-[#6FA3D6] text-white font-title text-lg py-3 rounded-2xl shadow-lg hover:brightness-105 transition disabled:opacity-50"
           >
             {isLoading ? "A criar conta..." : "Começar Aventura!"}
           </motion.button>

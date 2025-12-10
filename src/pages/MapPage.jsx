@@ -17,17 +17,28 @@ import useHeading from "../hooks/useHeading";
 import { POIS } from "../data/pois";
 
 // ---- Helper para buscar cidade/distrito ----
+// Nota: Nominatim bloqueia requisições diretas do browser (CORS)
+// Para produção, esta funcionalidade deve ser implementada no backend
 async function getRegion(lat, lng) {
-  const res = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`
-  );
-  const data = await res.json();
-  return (
-    data.address.state ||
-    data.address.county ||
-    data.address.city ||
-    "—"
-  );
+  // Por enquanto, retornamos "—" para evitar erros CORS
+  // Em produção, fazer esta requisição através do backend
+  return "—";
+  
+  /* Código comentado - requer backend proxy devido a CORS
+  try {
+    const res = await fetch(
+      `/api/geocode/reverse?lat=${lat}&lon=${lng}`,
+      { method: 'GET' }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      return data.city || data.region || "—";
+    }
+  } catch (error) {
+    // Silenciosamente retorna "—"
+  }
+  return "—";
+  */
 }
 
 export default function MapPage() {
@@ -69,14 +80,14 @@ export default function MapPage() {
   // Atualizar localização → cidade/distrito
   useEffect(() => {
     if (!position?.lat || !position?.lng) return;
-    (async () => {
-      try {
-        const region = await getRegion(position.lat, position.lng);
-        setCity(region);
-      } catch (e) {
-        console.error("Erro ao buscar região:", e);
-      }
-    })();
+    
+    // Debounce para evitar muitas requisições
+    const timeoutId = setTimeout(async () => {
+      const region = await getRegion(position.lat, position.lng);
+      setCity(region);
+    }, 1000); // Aguarda 1 segundo antes de fazer a requisição
+    
+    return () => clearTimeout(timeoutId);
   }, [position]);
 
   // Recolha de POIs
@@ -106,8 +117,8 @@ export default function MapPage() {
             }}
           >
             <TileLayer
-              attribution="&copy; OpenStreetMap"
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             />
 
             {/* Utilizador */}

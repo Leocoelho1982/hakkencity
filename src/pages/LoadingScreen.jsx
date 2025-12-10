@@ -14,7 +14,7 @@ export default function LoadingScreen() {
   }, [navigate]);
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
+    <div className="h-screen w-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#E8F6FF] via-[#F5F0FF] to-[#FFF8E6]">
       <div className="flex flex-col items-center text-center">
         
         <img src={logo_smartcodi} className="mb-16"  />
