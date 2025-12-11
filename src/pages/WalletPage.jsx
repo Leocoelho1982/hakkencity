@@ -34,7 +34,7 @@ export default function WalletPage() {
           bg-gold-60 border-[3px] border-marron-100
           flex items-center justify-center
           shadow-[0_3px_0px_var(--color-marron-100)]
-          hover:scale-110 transition
+          hover:scale-110 transition cursor-pointer
         "
       >
         <FiArrowLeft size={22} className="text-marron-100" />
