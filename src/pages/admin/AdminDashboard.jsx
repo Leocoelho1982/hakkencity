@@ -11,7 +11,7 @@ import {
   useGetCitiesCountQuery,
   useGetZonesCountQuery,
   useGetPoisCountQuery,
-} from "../features/adminApi";
+} from "../../features/adminApi";
 
 export default function AdminDashboard() {
   const menu = [
