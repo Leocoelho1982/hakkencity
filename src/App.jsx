@@ -23,6 +23,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminRoute from "./pages/admin/AdminRoute";
 import UsersPage from "./pages/admin/UsersPage";
 import CitiesPage from "./pages/admin/CitiesPage";
+import ZonePage from "./pages/admin/ZonePage";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -71,6 +72,7 @@ export default function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UsersPage />} />
         <Route path="/admin/cities" element={<CitiesPage />} />
+        <Route path="/admin/zones" element={<ZonePage />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />
