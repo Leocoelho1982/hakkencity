@@ -15,7 +15,7 @@ import LeaderboardButton from "../components/LeaderboardButton";
 import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 
-import { useGetPoisQuery } from "../store/poiApi";
+import { useGetPoisQuery } from "../features/poiApi";
 
 
 // ---- Helper para buscar cidade/distrito via Nominatim ----
