@@ -46,5 +46,5 @@ export default function PlayerMarker({ position }) {
   // Agora funciona: backend devolve o URL completo já com hash
   const avatarUrl = image || avatarFallback;
 
-  return <Marker position={position} icon={makeCircleIcon({ image: avatarUrl })} />;
+  return <Marker position={position} zIndexOffset={100} icon={makeCircleIcon({ image: avatarUrl })} />;
 }

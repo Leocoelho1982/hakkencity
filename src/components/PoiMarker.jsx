@@ -221,6 +221,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
       <Marker
         position={{ lat: poi.lat, lng: poi.lng }}
         icon={makeIcon(isCollected)}
+        zIndexOffset={canCollect ? 1000 : 300}
         eventHandlers={{ click: () => setOpen(true) }}
       />
 
