@@ -31,10 +31,12 @@ export default function AdminDashboard() {
     }
 
   const menu = [
-    { name: "Utilizadores", icon: <FiUsers className="h-5 w-5" />, to: "/admin/users" },
-    { name: "POIs", icon: <FiMapPin className="h-5 w-5" />, to: "/admin/pois" },
+    
     { name: "Cidades", icon: <FiMap className="h-5 w-5" />, to: "/admin/cities" },
     { name: "Zonas", icon: <FiGrid className="h-5 w-5" />, to: "/admin/zones" },
+    { name: "POIs", icon: <FiMapPin className="h-5 w-5" />, to: "/admin/pois" },
+    { name: "Utilizadores", icon: <FiUsers className="h-5 w-5" />, to: "/admin/users" },
+    
   ];
 
   const logout = async () => {
