@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useSelector } from "react-redux";
 
-import Leaderboard from "../components/Leaderboard";
 import PlayerMarker from "../components/PlayerMarker";
 import PoiMarker from "../components/PoiMarker";
 import TopBar from "../components/TopBar";
@@ -16,6 +15,7 @@ import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 
 import { useGetPoisQuery } from "../features/poiApi";
+import { useCollectPoiMutation } from "../features/gameApi";
 
 
 // ---- Helper para buscar cidade/distrito via Nominatim ----
@@ -47,12 +47,17 @@ export default function MapPage() {
   const { heading, hasPermission, requestPermission } = useHeading();
 
 
+  // -------- Mutação para recolher moedas --------
+  const [collectPoi] = useCollectPoiMutation();
+
+
   // -------- POIs (vindo do backend) --------
   const {
     data: pois = [],
     isLoading: poisLoading,
     error: poisError,
   } = useGetPoisQuery();
+
 
   // -------- Região (cidade/distrito) --------
   const [city, setCity] = useState("—");
@@ -87,12 +92,36 @@ export default function MapPage() {
   }, [score]);
 
 
-  // -------- Recolha de POIs --------
-  function handleCollect(poi) {
-    if (!visited[poi.id]) {
-      setVisited((prev) => ({ ...prev, [poi.id]: true }));
-      setScore((prev) => prev + (poi.points || 0));
-      navigator.vibrate?.(80);
+  // -------- Recolha de POIs (agora com coins reais do backend) --------
+  async function handleCollect(poi) {
+    try {
+      // 1) ENVIA PARA O BACKEND
+      const res = await collectPoi(poi.id).unwrap();
+
+      /*
+        res = {
+          message: "Moeda coletada",
+          coins: 1,
+          xp: 10,
+          level: 1,
+          poi: {...}
+        }
+      */
+
+      console.log("Resposta backend:", res);
+
+      // 2) MARCA LOCALMENTE
+      if (!visited[poi.id]) {
+        setVisited((prev) => ({ ...prev, [poi.id]: true }));
+
+        // SOMA AS MOEDAS REAIS QUE O BACKEND ENTREGOU
+        setScore((prev) => prev + res.coins);
+
+        navigator.vibrate?.(80);
+      }
+
+    } catch (err) {
+      console.error("Erro ao recolher moeda no backend:", err);
     }
   }
 
@@ -157,7 +186,7 @@ export default function MapPage() {
                 lat: p.lat,
                 lng: p.lng,
                 radius: p.radius,
-                points: p.coins,                // conversão coins → points
+                points: p.coins, // valor configurado do POI (não usado no score)
                 tags: p.tags?.split(",") || [],
                 content: {
                   title: p.content_title,
