@@ -22,7 +22,9 @@ import { PuffLoader } from "react-spinners";
 export default function POIProgressPage() {
   const navigate = useNavigate();
 
-  // --- FETCH ---
+  // ------------------------------------------
+  // FETCH
+  // ------------------------------------------
   const { data: poisData, isLoading: loadingPois } = useGetPoisQuery();
   const { data: collectedData, isLoading: loadingCollected } =
     useGetCollectedPoisQuery();
@@ -32,7 +34,17 @@ export default function POIProgressPage() {
   const [openZone, setOpenZone] = useState(null);
   const toggleZone = (zone) => setOpenZone(openZone === zone ? null : zone);
 
-  // --- AGRUPAR POR ZONA ---
+  // ------------------------------------------
+  // GERAR LINK DO GOOGLE MAPS
+  // ------------------------------------------
+  function openGoogleMaps(poi) {
+    const url = `https://www.google.com/maps?q=${poi.lat},${poi.lng}`;
+    window.open(url, "_blank");
+  }
+
+  // ------------------------------------------
+  // AGRUPAR POR ZONA
+  // ------------------------------------------
   const zones = useMemo(() => {
     if (!poisData) return [];
 
@@ -46,6 +58,8 @@ export default function POIProgressPage() {
       groups[zoneName].push({
         id: poi.id,
         name: poi.name,
+        lat: poi.lat,
+        lng: poi.lng,
         visited: collected.includes(poi.id),
       });
     });
@@ -56,7 +70,9 @@ export default function POIProgressPage() {
     }));
   }, [poisData, collected]);
 
-  // --- LOADING ---
+  // ------------------------------------------
+  // LOADING
+  // ------------------------------------------
   if (loadingPois || loadingCollected) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
@@ -65,6 +81,9 @@ export default function POIProgressPage() {
     );
   }
 
+  // ------------------------------------------
+  // RENDER
+  // ------------------------------------------
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 p-6 pt-20 relative">
 
@@ -150,13 +169,7 @@ export default function POIProgressPage() {
                   {zone.pois.map((poi) => (
                     <div
                       key={poi.id}
-                      onClick={() => {
-                        // 🔥 ABRIR MODAL GLOBAL DO POI
-                        const event = new CustomEvent("openPoiModal", {
-                          detail: poi.id,
-                        });
-                        window.dispatchEvent(event);
-                      }}
+                      onClick={() => openGoogleMaps(poi)}
                       className="
                         bg-gold-20 border-[2px] border-gold-60
                         rounded-xl p-3 shadow-md flex items-center gap-3
