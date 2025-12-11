@@ -7,34 +7,29 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 
+import {
+  useGetCitiesCountQuery,
+  useGetZonesCountQuery,
+  useGetPoisCountQuery,
+} from "../features/adminApi";
+
 export default function AdminDashboard() {
   const menu = [
-    {
-      name: "Utilizadores",
-      icon: <FiUsers className="h-5 w-5" />,
-      to: "/admin/users",
-    },
-    {
-      name: "POIs",
-      icon: <FiMapPin className="h-5 w-5" />,
-      to: "/admin/pois",
-    },
-    {
-      name: "Cidades",
-      icon: <FiMap className="h-5 w-5" />,
-      to: "/admin/cities",
-    },
-    {
-      name: "Zonas",
-      icon: <FiGrid className="h-5 w-5" />,
-      to: "/admin/zones",
-    },
+    { name: "Utilizadores", icon: <FiUsers className="h-5 w-5" />, to: "/admin/users" },
+    { name: "POIs", icon: <FiMapPin className="h-5 w-5" />, to: "/admin/pois" },
+    { name: "Cidades", icon: <FiMap className="h-5 w-5" />, to: "/admin/cities" },
+    { name: "Zonas", icon: <FiGrid className="h-5 w-5" />, to: "/admin/zones" },
   ];
 
   const logout = () => {
     localStorage.removeItem("adminToken");
     window.location.href = "/admin/login";
   };
+
+  // ---- Estatísticas ----
+  const { data: citiesCount } = useGetCitiesCountQuery();
+  const { data: zonesCount } = useGetZonesCountQuery();
+  const { data: poisCount } = useGetPoisCountQuery();
 
   return (
     <div className="min-h-screen flex bg-gray-100">
@@ -68,9 +63,31 @@ export default function AdminDashboard() {
       {/* Conteúdo */}
       <main className="flex-1 p-10">
         <h1 className="text-3xl font-bold mb-6">Painel Administrativo</h1>
-        <p className="text-gray-700">
+        <p className="text-gray-700 mb-8">
           Escolha uma opção no menu à esquerda para gerir os dados do jogo.
         </p>
+
+        {/* Estatísticas */}
+        <div className="grid grid-cols-3 gap-6 mt-10">
+          <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
+            <FiMap className="h-8 w-8 text-blue-600 mb-2" />
+            <p className="text-2xl font-bold">{citiesCount?.total ?? "—"}</p>
+            <p className="text-gray-600">Cidades</p>
+          </div>
+
+          <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
+            <FiGrid className="h-8 w-8 text-green-600 mb-2" />
+            <p className="text-2xl font-bold">{zonesCount?.total ?? "—"}</p>
+            <p className="text-gray-600">Zonas</p>
+          </div>
+
+          <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
+            <FiMapPin className="h-8 w-8 text-red-600 mb-2" />
+            <p className="text-2xl font-bold">{poisCount?.total ?? "—"}</p>
+            <p className="text-gray-600">POIs</p>
+          </div>
+        </div>
+
       </main>
     </div>
   );
