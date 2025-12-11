@@ -8,7 +8,7 @@ import {
   FiChevronDown,
   FiChevronUp,
   FiMapPin,
-  FiAward,
+  FiStar,
   FiHelpCircle
 } from "react-icons/fi";
 
@@ -22,7 +22,7 @@ import { PuffLoader } from "react-spinners";
 export default function POIProgressPage() {
   const navigate = useNavigate();
 
-  // --- FETCH VIA REDUX ---
+  // --- FETCH ---
   const { data: poisData, isLoading: loadingPois } = useGetPoisQuery();
   const { data: collectedData, isLoading: loadingCollected } =
     useGetCollectedPoisQuery();
@@ -32,9 +32,7 @@ export default function POIProgressPage() {
   const [openZone, setOpenZone] = useState(null);
   const toggleZone = (zone) => setOpenZone(openZone === zone ? null : zone);
 
-  // ------------------------------------------------------
-  // AGRUPAR POIs POR ZONA + VISITADOS
-  // ------------------------------------------------------
+  // --- AGRUPAR POR ZONA ---
   const zones = useMemo(() => {
     if (!poisData) return [];
 
@@ -58,44 +56,40 @@ export default function POIProgressPage() {
     }));
   }, [poisData, collected]);
 
-  // ------------------------------------------------------
-  // LOADING
-  // ------------------------------------------------------
+  // --- LOADING ---
   if (loadingPois || loadingCollected) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
-        <PuffLoader color="#8B3A1A" size={80} />
+        <PuffLoader color="var(--color-marron-100)" size={80} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 p-6 pt-16">
+    <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 p-6 pt-20 relative">
 
       {/* BOTÃO VOLTAR */}
       <button
         onClick={() => navigate("/map")}
         className="
-          absolute top-4 left-4
-          w-11 h-11 rounded-full
-          bg-[#F8DCA0]
-          border-[3px] border-[#8B5E3C]
+          absolute top-5 left-4 w-12 h-12 rounded-full
+          bg-gold-60 border-[3px] border-marron-100
           flex items-center justify-center
-          shadow-[0_3px_0px_#C89B4C]
+          shadow-[0_3px_0px_var(--color-marron-100)]
           hover:scale-110 transition cursor-pointer
         "
       >
-        <FiArrowLeft size={20} className="text-[#5A2C0A]" />
+        <FiArrowLeft size={22} className="text-marron-100" />
       </button>
 
-      {/* 🔥 TÍTULO — idêntico ao WalletPage */}
+      {/* TÍTULO (MESMO DO WALLET) */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="
-          font-title text-3xl text-center text-[#5A2C0A]
-          bg-[#E9C27D] px-8 py-3 rounded-xl
-          shadow-inner border-b-[4px] border-[#C89B4C]
+          font-title text-3xl text-center text-marron-100
+          bg-gold-100 px-10 py-3 rounded-xl
+          shadow-inner border-b-[4px] border-[#b29146]
           max-w-lg mx-auto
         "
       >
@@ -103,7 +97,7 @@ export default function POIProgressPage() {
       </motion.h1>
 
       {/* LISTA DE ZONAS */}
-      <div className="max-w-lg mx-auto space-y-5 mt-6">
+      <div className="max-w-lg mx-auto space-y-5 mt-10">
         {zones.map((zone, index) => {
           const visited = zone.pois.filter((p) => p.visited).length;
           const total = zone.pois.length;
@@ -116,11 +110,12 @@ export default function POIProgressPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.07 }}
               className="
-                bg-white rounded-2xl border-[4px] border-yellow-300
+                bg-white rounded-2xl 
+                border-[4px] border-gold-60
                 shadow-xl p-5 relative
               "
             >
-              {/* HEADER */}
+              {/* HEADER DA ZONA */}
               <button
                 className="w-full flex justify-between items-center"
                 onClick={() => toggleZone(zone.name)}
@@ -142,9 +137,9 @@ export default function POIProgressPage() {
               </button>
 
               {/* PROGRESS BAR */}
-              <div className="mt-3 w-full bg-[#f4e2b8] h-4 rounded-full overflow-hidden shadow-inner">
+              <div className="mt-3 w-full bg-gold-40 h-4 rounded-full overflow-hidden shadow-inner">
                 <div
-                  className="h-full bg-[#8B3A1A] transition-all"
+                  className="h-full bg-marron-100 transition-all"
                   style={{ width: `${percent}%` }}
                 ></div>
               </div>
@@ -156,7 +151,7 @@ export default function POIProgressPage() {
                     <div
                       key={poi.id}
                       className="
-                        bg-yellow-50 border-[2px] border-yellow-300
+                        bg-gold-20 border-[2px] border-gold-60
                         rounded-xl p-3 shadow-md flex items-center gap-3
                       "
                     >
@@ -171,11 +166,11 @@ export default function POIProgressPage() {
                         </p>
                       </div>
 
-                      {/* ✔ ÍCONES GAMIFICADOS — MAIS ESTILO "AVENTURA" */}
+                      {/* ÍCONES GAMIFICADOS — CONSISTENTES */}
                       {poi.visited ? (
-                        <FiAward
+                        <FiStar
                           size={26}
-                          className="text-green-700 drop-shadow-sm"
+                          className="text-yellow-500 drop-shadow-sm"
                         />
                       ) : (
                         <FiHelpCircle
