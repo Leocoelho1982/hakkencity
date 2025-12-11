@@ -2,11 +2,14 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+
 import {
   FiArrowLeft,
   FiChevronDown,
   FiChevronUp,
-  FiMapPin
+  FiMapPin,
+  FiAward,
+  FiHelpCircle
 } from "react-icons/fi";
 
 import {
@@ -27,13 +30,10 @@ export default function POIProgressPage() {
   const collected = collectedData?.collected || [];
 
   const [openZone, setOpenZone] = useState(null);
-
-  const toggleZone = (zone) => {
-    setOpenZone(openZone === zone ? null : zone);
-  };
+  const toggleZone = (zone) => setOpenZone(openZone === zone ? null : zone);
 
   // ------------------------------------------------------
-  // AGRUPAR POIs POR ZONA + IDENTIFICAR VISITADOS
+  // AGRUPAR POIs POR ZONA + VISITADOS
   // ------------------------------------------------------
   const zones = useMemo(() => {
     if (!poisData) return [];
@@ -63,7 +63,7 @@ export default function POIProgressPage() {
   // ------------------------------------------------------
   if (loadingPois || loadingCollected) {
     return (
-       <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
+      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
         <PuffLoader color="#8B3A1A" size={80} />
       </div>
     );
@@ -77,8 +77,7 @@ export default function POIProgressPage() {
         onClick={() => navigate("/map")}
         className="
           absolute top-4 left-4
-          w-11 h-11
-          rounded-full
+          w-11 h-11 rounded-full
           bg-[#F8DCA0]
           border-[3px] border-[#8B5E3C]
           flex items-center justify-center
@@ -89,24 +88,22 @@ export default function POIProgressPage() {
         <FiArrowLeft size={20} className="text-[#5A2C0A]" />
       </button>
 
-      {/* TÍTULO */}
-      <motion.div
-        initial={{ opacity: 0, y: -12 }}
+      {/* 🔥 TÍTULO — idêntico ao WalletPage */}
+      <motion.h1
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="
-          bg-[#E9C27D] 
-          text-[#5A2C0A] 
-          font-title text-2xl text-center
-          px-6 py-3 rounded-xl shadow-inner
-          border-b-[4px] border-[#C89B4C]
-          max-w-lg mx-auto mb-6
+          font-title text-3xl text-center text-[#5A2C0A]
+          bg-[#E9C27D] px-8 py-3 rounded-xl
+          shadow-inner border-b-[4px] border-[#C89B4C]
+          max-w-lg mx-auto
         "
       >
         Progresso dos POIs por Zona
-      </motion.div>
+      </motion.h1>
 
       {/* LISTA DE ZONAS */}
-      <div className="max-w-lg mx-auto space-y-5">
+      <div className="max-w-lg mx-auto space-y-5 mt-6">
         {zones.map((zone, index) => {
           const visited = zone.pois.filter((p) => p.visited).length;
           const total = zone.pois.length;
@@ -117,7 +114,7 @@ export default function POIProgressPage() {
               key={zone.name}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.08 }}
+              transition={{ delay: index * 0.07 }}
               className="
                 bg-white rounded-2xl border-[4px] border-yellow-300
                 shadow-xl p-5 relative
@@ -170,19 +167,22 @@ export default function POIProgressPage() {
                           {poi.name}
                         </p>
                         <p className="text-xs text-marron-80">
-                          {poi.visited ? "Visitado ✔️" : "Por explorar…"}
+                          {poi.visited ? "Visitado" : "Por explorar…"}
                         </p>
                       </div>
 
-                      <span
-                        className={
-                          poi.visited
-                            ? "text-green-700 font-bold"
-                            : "text-red-600 font-bold"
-                        }
-                      >
-                        {poi.visited ? "✔" : "•"}
-                      </span>
+                      {/* ✔ ÍCONES GAMIFICADOS — MAIS ESTILO "AVENTURA" */}
+                      {poi.visited ? (
+                        <FiAward
+                          size={26}
+                          className="text-green-700 drop-shadow-sm"
+                        />
+                      ) : (
+                        <FiHelpCircle
+                          size={26}
+                          className="text-red-600 drop-shadow-sm"
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
