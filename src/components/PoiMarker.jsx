@@ -13,6 +13,9 @@ import iconClose from "../assets/bt_close.png";
 import EffectParticles from "../components/EffectParticles";
 import { coinSound } from "../utils/sound";
 
+// -------------------------------------------
+// ÍCONE DO POI
+// -------------------------------------------
 function makeIcon(collected) {
   return L.icon({
     iconUrl: coinIcon,
@@ -32,20 +35,23 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
 
-  // -----------------------------------------
-  // ABRIR MODAL A PARTIR DE OUTRA PÁGINA
-  // -----------------------------------------
+  // -------------------------------------------
+  // PERMITIR QUE OUTRAS PÁGINAS ABRAM O MODAL
+  // -------------------------------------------
   useEffect(() => {
     function handleOpenModal(e) {
-      if (e.detail === poi.id) setOpen(true);
+      if (e.detail === poi.id) {
+        setOpen(true);
+      }
     }
+
     window.addEventListener("openPoiModal", handleOpenModal);
     return () => window.removeEventListener("openPoiModal", handleOpenModal);
   }, [poi.id]);
 
-  // -----------------------------------------
+  // -------------------------------------------
   // DISTÂNCIA
-  // -----------------------------------------
+  // -------------------------------------------
   const distance = useMemo(() => {
     if (!userPosition) return null;
     const from = turf.point([userPosition.lng, userPosition.lat]);
@@ -56,28 +62,26 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
   const isCollected = visited.includes(poi.id);
   const canCollect = !isCollected && distance !== null && distance <= poi.radius;
 
-  // -----------------------------------------
-  // ALERTA DE PROXIMIDADE
-  // -----------------------------------------
+  // -------------------------------------------
+  // ALERTA DE PROXIMIDADE (BALÃO GAMIFICADO)
+  // -------------------------------------------
   const proximityAlert =
     canCollect &&
     createPortal(
-      <div
-        className="
-          fixed bottom-28 left-1/2 -translate-x-1/2
-          bg-gold-60 text-marron-100
-          px-5 py-2 rounded-full shadow-xl z-[900]
-          border-2 border-gold-80 font-bold animate-bounce
-        "
-      >
+      <div className="
+        fixed bottom-28 left-1/2 -translate-x-1/2
+        bg-gold-60 text-marron-100 font-bold
+        px-5 py-2 rounded-full shadow-xl z-[900]
+        border-2 border-gold-80 animate-bounce
+      ">
         🎉 Estás no raio do POI! Toca no marcador para recolher moedas!
       </div>,
       document.body
     );
 
-  // -----------------------------------------
-  // MODAL DO POI — TOTALMENTE CONSISTENTE
-  // -----------------------------------------
+  // -------------------------------------------
+  // MODAL DO POI (COMPATÍVEL COM TODO O TEMA)
+  // -------------------------------------------
   const modal = open
     ? createPortal(
         <div
@@ -92,7 +96,7 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
             "
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Fechar */}
+            {/* BOTÃO FECHAR */}
             <button
               onClick={() => setOpen(false)}
               className="absolute top-3 right-3 hover:scale-110 transition"
@@ -100,7 +104,7 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
               <img src={iconClose} className="h-7 w-7" alt="Fechar" />
             </button>
 
-            {/* TÍTULO */}
+            {/* TÍTULO DO MODAL */}
             <h3
               className="
                 font-title text-2xl mb-4 text-marron-100 text-center
@@ -111,7 +115,7 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
               {poi.content?.title || poi.name}
             </h3>
 
-            {/* IMAGEM DO POI */}
+            {/* IMAGEM */}
             {poi.content?.image && (
               <div className="relative mb-4">
                 <img
@@ -124,14 +128,12 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
                 />
 
                 {/* MOEDAS */}
-                <div
-                  className="
-                    absolute top-3 left-3 flex items-center
-                    bg-white/80 rounded-full px-3 py-1 shadow-md
-                    border border-gold-80
-                  "
-                >
-                  <img src={coinsIcon} alt="" className="w-6 h-6 mr-1" />
+                <div className="
+                  absolute top-3 left-3 flex items-center
+                  bg-white/80 rounded-full px-3 py-1 shadow-md
+                  border border-gold-80
+                ">
+                  <img src={coinsIcon} className="w-6 h-6 mr-1" />
                   <span className="font-extrabold text-marron-100 text-lg">
                     {poi.points}
                   </span>
@@ -145,7 +147,7 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
                     rounded-full p-2 shadow-md hover:scale-110 transition
                   "
                 >
-                  <img src={ampliarIcon} alt="Ampliar" className="w-6 h-6" />
+                  <img src={ampliarIcon} className="w-6 h-6" />
                 </button>
               </div>
             )}
@@ -187,7 +189,7 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
               </p>
             </div>
 
-            {/* BOTÃO DE RECOLHA */}
+            {/* BOTÃO RECOLHER */}
             {canCollect ? (
               <button
                 onClick={() => {
@@ -219,9 +221,9 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
       )
     : null;
 
-  // -----------------------------------------
-  // LIGHTBOX
-  // -----------------------------------------
+  // -------------------------------------------
+  // LIGHTBOX COM IMAGEM GRANDE
+  // -------------------------------------------
   const lightbox = lightboxOpen
     ? createPortal(
         <div
@@ -236,12 +238,11 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
               onClick={() => setLightboxOpen(false)}
               className="absolute top-4 right-4 bg-white/90 rounded-full p-2 shadow-xl hover:scale-110 transition"
             >
-              <img src={iconClose} className="h-8 w-8" alt="Fechar" />
+              <img src={iconClose} className="h-8 w-8" />
             </button>
 
             <img
               src={poi.content?.image}
-              alt="Grande"
               className="w-full max-h-[80vh] object-contain rounded-3xl shadow-2xl"
             />
           </div>
@@ -250,9 +251,11 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
       )
     : null;
 
+  // -------------------------------------------
+  // RENDER FINAL
+  // -------------------------------------------
   return (
     <>
-      {/* Área do POI */}
       <Circle
         center={{ lat: poi.lat, lng: poi.lng }}
         radius={poi.radius}
@@ -262,7 +265,6 @@ export default function PoiMarker({ poi, userPosition, visited = [], onCollect }
         }}
       />
 
-      {/* Marcador */}
       <Marker
         position={{ lat: poi.lat, lng: poi.lng }}
         icon={makeIcon(isCollected)}
