@@ -1,38 +1,21 @@
 import { useState } from "react";
+import { useAdminLoginMutation } from "../../features/adminApi";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [adminLogin, { isLoading }] = useAdminLoginMutation();
 
   const login = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      const res = await fetch("https://api.hakkencity.com/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",  // 🔥 envia o cookie para o browser
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        alert("Credenciais incorretas");
-        setLoading(false);
-        return;
-      }
-
-      // Como agora é por cookie, não há token para guardar.
+      await adminLogin({ username, password }).unwrap();
       window.location.href = "/admin";
 
     } catch (err) {
-      console.error("Erro no login admin:", err);
-      alert("Erro ao ligar ao servidor");
-    } finally {
-      setLoading(false);
+      console.error("Erro login admin:", err);
+      alert("Credenciais inválidas");
     }
   };
 
@@ -48,7 +31,7 @@ export default function AdminLogin() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Utilizador"
-            className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 outline-none"
+            className="w-full px-4 py-2 border rounded-lg"
           />
 
           <input
@@ -56,15 +39,15 @@ export default function AdminLogin() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Senha"
             type="password"
-            className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 outline-none"
+            className="w-full px-4 py-2 border rounded-lg"
           />
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2 rounded-lg font-medium disabled:opacity-50"
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg disabled:opacity-50"
           >
-            {loading ? "A entrar..." : "Entrar"}
+            {isLoading ? "A entrar..." : "Entrar"}
           </button>
         </form>
       </div>
