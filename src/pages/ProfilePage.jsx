@@ -16,7 +16,7 @@ import avatarFallback from "../assets/avatar.jpg";
 
 /// --- XP e Level com progressão crescente ---
 function calculateXp(coins, badges = 0) {
-  return coins * 3 + badges * 200;
+  return coins * 2 + badges * 200;
 }
 
 function calculateLevel(xp) {
