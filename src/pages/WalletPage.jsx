@@ -1,116 +1,121 @@
 /* eslint-disable */
 import React from "react";
-import { useSelector } from "react-redux";
-import { FiArrowLeft, FiStar, FiTrendingUp } from "react-icons/fi";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiArrowLeft, FiStar, FiTrendingUp } from "react-icons/fi";
+import { useGetCoinsTotalQuery } from "../features/poiApi";
 
 import chestImg from "../assets/mapicon.png";
 import coin from "../assets/coins.png";
 
 export default function WalletPage() {
   const navigate = useNavigate();
-  const score = useSelector((state) => state.user.score);
+
+  // 👉 pega o total real do backend
+  const { data } = useGetCoinsTotalQuery();
+  const totalCoins = data?.coins ?? 0;
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 px-6 
-                    flex flex-col items-center pt-16 relative">
-
-      {/* VOLTAR */}
+    <div
+      className="
+        min-h-screen w-full 
+        bg-gradient-to-b from-gold-20 to-gold-60 
+        px-6 pb-16
+        flex flex-col items-center pt-16 relative
+      "
+    >
+      {/* BOTÃO VOLTAR */}
       <button
-  onClick={() => navigate("/map")}
-  className="
-    absolute top-4 left-4
-    w-11 h-11
-    rounded-full
-    bg-[#F8DCA0]
-    border-[3px] border-[#8B5E3C]
-    flex items-center justify-center
-    shadow-[0_3px_0px_#C89B4C]
-    hover:scale-110 transition
-  "
->
-  <FiArrowLeft size={20} className="text-[#5A2C0A]" />
-</button>
-
+        onClick={() => navigate("/map")}
+        className="
+          absolute top-5 left-4
+          w-12 h-12 rounded-full
+          bg-[#F8DCA0]
+          border-[3px] border-[#8B5E3C]
+          flex items-center justify-center
+          shadow-[0_3px_0px_#C89B4C]
+          hover:scale-110 transition
+        "
+      >
+        <FiArrowLeft size={22} className="text-[#5A2C0A]" />
+      </button>
 
       {/* TÍTULO */}
-      <motion.div
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="
-                  bg-[#E9C27D] 
-                  text-[#5A2C0A] 
-                  font-title 
-                  text-2xl 
-                  text-center 
-                  px-6 py-2 
-                  rounded-xl 
-                  shadow-inner 
-                  border-b-[3px] border-[#C89B4C] 
-                  mb-4 mt-6
-              "
-              >
+      <motion.h1
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="
+          font-title text-3xl text-center text-[#5A2C0A]
+          bg-[#E9C27D]
+          px-8 py-3 rounded-xl
+          shadow-inner border-b-[3px] border-[#C89B4C]
+        "
+      >
         Tesouro do Explorador
-      </motion.div>
+      </motion.h1>
 
-      {/* COFRE ANIMADO */}
+      {/* BAÚ CENTRAL */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 120 }}
-        className="relative mt-4"
+        className="relative mt-8"
       >
         <img
           src={chestImg}
           alt="Cofre de Tesouro"
-          className="w-44 sm:w-52 drop-shadow-xl"
+          className="w-48 drop-shadow-xl"
         />
 
-        {/* Shine / Sparkle */}
+        {/* brilho animado */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1, rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-4 left-1/2 -translate-x-1/2 text-yellow-400"
+          className="absolute -top-5 left-1/2 -translate-x-1/2 text-yellow-400"
         >
-          <FiStar size={36} />
+          <FiStar size={40} />
         </motion.div>
       </motion.div>
 
-      {/* TOTAL DE MOEDAS */}
+      {/* CARD DE MOEDAS */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="mt-6 bg-[#8B3A1A] text-white px-10 py-4 rounded-3xl shadow-xl 
-                   font-title text-4xl flex items-center gap-3"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="
+          mt-8 px-10 py-4 rounded-3xl
+          bg-[#8B3A1A] text-white font-title text-4xl
+          shadow-xl flex items-center gap-4
+          border-[3px] border-[#5A2C0A]
+        "
       >
-        <img src={coin} className="w-10 h-10 drop-shadow-md" alt="coins" />
-        {score}
+        <img src={coin} className="w-12 h-12 drop-shadow-md" alt="coins" />
+        {totalCoins}
       </motion.div>
 
-      {/* DESCRIÇÃO */}
       <p className="text-marron-100 text-center mt-3 font-semibold">
-        Moedas acumuladas nas tuas aventuras!
+        Total acumulado das tuas aventuras!
       </p>
 
       {/* HISTÓRICO */}
       <motion.div
-        className="w-full max-w-md bg-white mt-8 rounded-2xl shadow-xl 
-                   p-6 border-4 border-yellow-300"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+        className="
+          w-full max-w-md bg-white mt-10 rounded-2xl
+          shadow-xl p-6 border-4 border-yellow-300
+        "
       >
         <h2 className="text-lg font-bold text-marron-100 mb-3 flex items-center gap-2">
-          <FiTrendingUp /> Histórico de Ganhos
+          <FiTrendingUp /> Histórico de Recolhas
         </h2>
 
         <p className="text-sm text-marron-80 italic">
-          Em breve vais poder ver de onde vieram todas as tuas conquistas!
+          Em breve vais poder ver cada tesouro conquistado, com datas e locais!
         </p>
       </motion.div>
-
     </div>
   );
 }
