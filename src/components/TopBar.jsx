@@ -13,7 +13,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city, l
   return (
     <div className="relative w-full z-50">
       {/* FUNDO DA BARRA */}
-      
+      <div className="bg-gold-20/10 p-2 rounded-b-3xl shadow-lg">
 
         {/* CONTENT */}
         <div className="
@@ -125,7 +125,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city, l
         </div>
 
         
-      
+      </div>
     </div>
   );
 }
