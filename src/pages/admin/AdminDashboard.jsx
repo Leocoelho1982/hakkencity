@@ -13,7 +13,23 @@ import {
   useGetPoisCountQuery,
 } from "../../features/adminApi";
 
+import { useAdminSessionQuery } from "../../features/adminApi";
+
+
 export default function AdminDashboard() {
+
+    const { data, error, isLoading } = useAdminSessionQuery();
+
+    if (isLoading) {
+    return <div className="p-6">A carregar…</div>;
+    }
+
+    // cookie inválido → vai para login
+    if (error) {
+    window.location.href = "/admin/login";
+    return null;
+    }
+
   const menu = [
     { name: "Utilizadores", icon: <FiUsers className="h-5 w-5" />, to: "/admin/users" },
     { name: "POIs", icon: <FiMapPin className="h-5 w-5" />, to: "/admin/pois" },

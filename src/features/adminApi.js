@@ -28,6 +28,10 @@ export const adminApi = createApi({
       }),
     }),
 
+    adminSession: builder.query({
+      query: () => "/admin/me",
+    }),
+
     // ESTATÍSTICAS
     getCitiesCount: builder.query({
       query: () => "/cities/count",
@@ -46,6 +50,7 @@ export const adminApi = createApi({
 export const {
   useAdminLoginMutation,
   useAdminLogoutMutation,
+  useAdminSessionQuery,
   useGetCitiesCountQuery,
   useGetZonesCountQuery,
   useGetPoisCountQuery,
