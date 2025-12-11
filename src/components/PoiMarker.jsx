@@ -43,7 +43,8 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
     return turf.distance(from, to, { units: "meters" });
   }, [userPosition, poi]);
 
-  const isCollected = visited[poi.id];
+  const isCollected = Array.isArray(visited) && visited.includes(poi.id);
+
   const canCollect = !isCollected && distance !== null && distance <= poi.radius;
 
   // -----------------------------------------
