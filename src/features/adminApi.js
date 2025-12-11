@@ -36,6 +36,22 @@ export const adminApi = createApi({
       }),
     }),
 
+    getUsers: builder.query({
+  query: () => ({
+    url: "/users",
+    credentials: "include",
+  }),
+}),
+
+deleteUser: builder.mutation({
+  query: (id) => ({
+    url: `/users/${id}`,
+    method: "DELETE",
+    credentials: "include",
+  }),
+}),
+
+
     // ---- CITIES ----
 getCities: builder.query({
   query: () => ({
@@ -191,4 +207,6 @@ export const {
   useCreateZoneMutation,
   useUpdateZoneMutation,
   useDeleteZoneMutation,
+  useGetUsersQuery,
+  useDeleteUserMutation,
 } = adminApi;

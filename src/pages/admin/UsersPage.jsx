@@ -1,68 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import {
+  useGetUsersQuery,
+  useDeleteUserMutation,
+} from "../../features/adminApi";
+
 export default function UsersPage() {
-  const [users, setUsers] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-
   const navigate = useNavigate();
-  const API = "https://api.hakkencity.com/api/users";
 
-  // ---------------------
-  // GET USERS
-  // ---------------------
-  const loadUsers = async () => {
-    setLoading(true);
+  const { data: users = [], isLoading, error, refetch } = useGetUsersQuery();
+  const [deleteUser] = useDeleteUserMutation();
 
-    try {
-      const token = localStorage.getItem("adminToken");
+  const [search, setSearch] = useState("");
+  const [filtered, setFiltered] = useState([]);
 
-      const res = await fetch(API, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      setUsers(data);
-      setFiltered(data);
-    } catch (err) {
-      console.error("Erro ao carregar utilizadores:", err);
-      alert("Falha ao carregar utilizadores.");
-    }
-
-    setLoading(false);
-  };
-
-  // ---------------------
-  // DELETE USER
-  // ---------------------
-  const deleteUser = async (id) => {
-    if (!confirm("Tem a certeza que deseja apagar este utilizador?")) return;
-
-    try {
-      const token = localStorage.getItem("adminToken");
-
-      const res = await fetch(`${API}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) return alert("Erro ao apagar.");
-
-      // Remover visualmente
-      const updated = users.filter((u) => u.id !== id);
-      setUsers(updated);
-      setFiltered(updated);
-    } catch (err) {
-      console.error("Erro ao apagar:", err);
-      alert("Falha ao remover utilizador.");
-    }
-  };
-
-  // ---------------------
-  // SEARCH BAR
-  // ---------------------
+  // Filtragem local
   useEffect(() => {
     const s = search.toLowerCase();
     setFiltered(
@@ -74,15 +27,28 @@ export default function UsersPage() {
     );
   }, [search, users]);
 
-  // ---------------------
-  // LOAD DATA
-  // ---------------------
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  // Delete user
+  const handleDelete = async (id) => {
+    if (!confirm("Tem a certeza que deseja apagar este utilizador?")) return;
 
-  if (loading)
+    try {
+      await deleteUser(id).unwrap();
+      refetch(); // atualiza lista
+    } catch (err) {
+      console.error("Erro ao apagar:", err);
+      alert("Falha ao remover utilizador.");
+    }
+  };
+
+  if (isLoading)
     return <p className="p-6 text-gray-600">A carregar utilizadores...</p>;
+
+  if (error)
+    return (
+      <p className="p-6 text-red-600">
+        Erro ao carregar utilizadores. Sessão pode ter expirado.
+      </p>
+    );
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -135,9 +101,10 @@ export default function UsersPage() {
                 <td className="p-3">{user.id}</td>
                 <td className="p-3 font-medium">{user.username}</td>
                 <td className="p-3">{user.name || "—"}</td>
+
                 <td className="p-3 space-x-4">
                   <button
-                    onClick={() => deleteUser(user.id)}
+                    onClick={() => handleDelete(user.id)}
                     className="text-red-600 hover:text-red-800 font-medium"
                   >
                     Apagar
