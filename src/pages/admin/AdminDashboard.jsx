@@ -21,10 +21,19 @@ export default function AdminDashboard() {
     { name: "Zonas", icon: <FiGrid className="h-5 w-5" />, to: "/admin/zones" },
   ];
 
-  const logout = () => {
-    localStorage.removeItem("adminToken");
+  const logout = async () => {
+  try {
+    await fetch("https://api.hakkencity.com/api/admin/logout", {
+      method: "POST",
+      credentials: "include",  // 🔥 envia o cookie para backend apagar
+    });
+
     window.location.href = "/admin/login";
-  };
+  } catch (err) {
+    console.error("Erro ao terminar sessão:", err);
+  }
+};
+
 
   // ---- Estatísticas ----
   const { data: citiesCount } = useGetCitiesCountQuery();

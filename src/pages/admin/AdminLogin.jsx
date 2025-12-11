@@ -15,20 +15,17 @@ export default function AdminLogin() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",  // 🔥 envia o cookie para o browser
         body: JSON.stringify({ username, password }),
       });
 
-      // Erro de credenciais
       if (!res.ok) {
         alert("Credenciais incorretas");
         setLoading(false);
         return;
       }
 
-      const data = await res.json();
-
-      // Salva token e vai para dashboard
-      localStorage.setItem("adminToken", data.token);
+      // Como agora é por cookie, não há token para guardar.
       window.location.href = "/admin";
 
     } catch (err) {
