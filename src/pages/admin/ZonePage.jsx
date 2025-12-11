@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 
-export default function ZonePage() {
-  const [zones, setZones] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [loading, setLoading] = useState(true);
+import {
+  useGetZonesQuery,
+  useCreateZoneMutation,
+  useUpdateZoneMutation,
+  useDeleteZoneMutation,
+  useGetCitiesQuery,
+} from "../../features/adminApi";
 
+export default function ZonePage() {
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -15,47 +19,15 @@ export default function ZonePage() {
 
   const [editingId, setEditingId] = useState(null);
 
-  const API = "https://api.hakkencity.com/api/zones";
-  const CITIES_API = "https://api.hakkencity.com/api/cities";
-  const token = localStorage.getItem("adminToken");
+  // ---- RTK QUERY ----
+  const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery();
+  const { data: cities = [] } = useGetCitiesQuery();
 
-  // ------------------------------
-  // LOAD ZONES
-  // ------------------------------
-  const loadZones = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API, {
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  const [createZone] = useCreateZoneMutation();
+  const [updateZone] = useUpdateZoneMutation();
+  const [deleteZone] = useDeleteZoneMutation();
 
-      const data = await res.json();
-      setZones(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Erro ao carregar zonas:", err);
-      alert("Falha ao carregar zonas.");
-    }
-    setLoading(false);
-  };
-
-  // ------------------------------
-  // LOAD CITIES
-  // ------------------------------
-  const loadCities = async () => {
-    try {
-      const res = await fetch(CITIES_API, {
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      setCities(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Erro ao carregar cidades:", err);
-      alert("Falha ao carregar a lista de cidades.");
-    }
-  };
+  const loading = loadingZones;
 
   // ------------------------------
   // CREATE OR UPDATE ZONE
@@ -63,56 +35,36 @@ export default function ZonePage() {
   const saveZone = async (e) => {
     e.preventDefault();
 
-    const method = editingId ? "PUT" : "POST";
-    const url = editingId ? `${API}/${editingId}` : API;
-
     try {
-      const res = await fetch(url, {
-        method,
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        console.log(await res.text());
-        return alert("Erro ao guardar zona.");
+      if (editingId) {
+        await updateZone({ id: editingId, body: form }).unwrap();
+      } else {
+        await createZone(form).unwrap();
       }
 
+      // Reset form
       setForm({ name: "", description: "", cityId: "" });
       setEditingId(null);
-      loadZones();
+
     } catch (err) {
       console.error("Erro ao guardar zona:", err);
+      alert("Falha ao guardar zona.");
     }
   };
 
   // ------------------------------
   // DELETE ZONE
   // ------------------------------
-  const deleteZone = async (id) => {
+  const handleDelete = async (id) => {
     if (!confirm("Tem a certeza que deseja apagar esta zona?")) return;
 
     try {
-      const res = await fetch(`${API}/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) loadZones();
+      await deleteZone(id).unwrap();
     } catch (err) {
       console.error("Erro ao apagar zona:", err);
+      alert("Falha ao apagar zona.");
     }
   };
-
-  useEffect(() => {
-    loadCities();
-    loadZones();
-  }, []);
 
   if (loading)
     return <p className="p-6 text-gray-600">A carregar zonas...</p>;
@@ -223,7 +175,7 @@ export default function ZonePage() {
                         </button>
 
                         <button
-                          onClick={() => deleteZone(zone.id)}
+                          onClick={() => handleDelete(zone.id)}
                           className="text-red-600 hover:text-red-800"
                         >
                           Apagar

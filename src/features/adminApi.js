@@ -36,6 +36,117 @@ export const adminApi = createApi({
       }),
     }),
 
+    // ---- CITIES ----
+getCities: builder.query({
+  query: () => ({
+    url: "/cities",
+    credentials: "include",
+  }),
+}),
+
+// ---- ZONES ----
+getZones: builder.query({
+  query: () => ({
+    url: "/zones",
+    credentials: "include",
+  }),
+}),
+
+// ---- POIS ----
+getPois: builder.query({
+  query: () => ({
+    url: "/pois",
+    credentials: "include",
+  }),
+}),
+
+createPoi: builder.mutation({
+  query: (body) => ({
+    url: "/pois",
+    method: "POST",
+    body,
+    credentials: "include",
+  }),
+}),
+
+updatePoi: builder.mutation({
+  query: ({ id, body }) => ({
+    url: `/pois/${id}`,
+    method: "PUT",
+    body,
+    credentials: "include",
+  }),
+}),
+
+deletePoi: builder.mutation({
+  query: (id) => ({
+    url: `/pois/${id}`,
+    method: "DELETE",
+    credentials: "include",
+  }),
+}),
+
+// ---- ZONES ----
+
+
+createZone: builder.mutation({
+  query: (body) => ({
+    url: "/zones",
+    method: "POST",
+    body,
+    credentials: "include",
+  }),
+}),
+
+updateZone: builder.mutation({
+  query: ({ id, body }) => ({
+    url: `/zones/${id}`,
+    method: "PUT",
+    body,
+    credentials: "include",
+  }),
+}),
+
+deleteZone: builder.mutation({
+  query: (id) => ({
+    url: `/zones/${id}`,
+    method: "DELETE",
+    credentials: "include",
+  }),
+}),
+
+
+// ---- CITIES ----
+
+
+createCity: builder.mutation({
+  query: (body) => ({
+    url: "/cities",
+    method: "POST",
+    body,
+    credentials: "include",
+  }),
+}),
+
+updateCity: builder.mutation({
+  query: ({ id, body }) => ({
+    url: `/cities/${id}`,
+    method: "PUT",
+    body,
+    credentials: "include",
+  }),
+}),
+
+deleteCity: builder.mutation({
+  query: (id) => ({
+    url: `/cities/${id}`,
+    method: "DELETE",
+    credentials: "include",
+  }),
+}),
+
+
+
     // ESTATÍSTICAS
     getCitiesCount: builder.query({
       query: () => ({
@@ -68,4 +179,16 @@ export const {
   useGetCitiesCountQuery,
   useGetZonesCountQuery,
   useGetPoisCountQuery,
+  useGetCitiesQuery,
+  useGetZonesQuery,
+  useGetPoisQuery,
+  useCreatePoiMutation,
+  useUpdatePoiMutation,
+  useDeletePoiMutation,
+  useCreateCityMutation,
+  useUpdateCityMutation,
+  useDeleteCityMutation,
+  useCreateZoneMutation,
+  useUpdateZoneMutation,
+  useDeleteZoneMutation,
 } = adminApi;

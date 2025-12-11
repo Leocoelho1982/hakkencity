@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 
+import {
+  useGetCitiesQuery,
+  useGetZonesQuery,
+  useGetPoisQuery,
+  useCreatePoiMutation,
+  useUpdatePoiMutation,
+  useDeletePoiMutation,
+} from "../../features/adminApi";
+
 export default function PoisPage() {
-  const [pois, setPois] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [zones, setZones] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
   const [form, setForm] = useState({
     name: "",
     lat: "",
@@ -24,90 +27,24 @@ export default function PoisPage() {
 
   const [editingId, setEditingId] = useState(null);
 
-  const API = "https://api.hakkencity.com/api/pois";
-  const CITIES_API = "https://api.hakkencity.com/api/cities";
-  const ZONES_API = "https://api.hakkencity.com/api/zones";
-  const token = localStorage.getItem("adminToken");
+  // ----- RTK QUERY -----
+  const { data: cities = [] } = useGetCitiesQuery();
+  const { data: zones = [] } = useGetZonesQuery();
+  const { data: pois = [], isLoading } = useGetPoisQuery();
 
-  // ------------------------------
-  // LOAD POIS
-  // ------------------------------
-  const loadPois = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(API, {
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  const [createPoi] = useCreatePoiMutation();
+  const [updatePoi] = useUpdatePoiMutation();
+  const [deletePoi] = useDeletePoiMutation();
 
-      const data = await res.json();
-      setPois(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Erro ao carregar POIs:", err);
-      alert("Falha ao carregar POIs.");
-    }
-    setLoading(false);
-  };
-
-  // ------------------------------
-  // LOAD CITIES
-  // ------------------------------
-  const loadCities = async () => {
-    try {
-      const res = await fetch(CITIES_API, {
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      setCities(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Erro ao carregar cidades:", err);
-      alert("Falha ao carregar a lista de cidades.");
-    }
-  };
-
-  // ------------------------------
-  // LOAD ZONES
-  // ------------------------------
-  const loadZones = async () => {
-    try {
-      const res = await fetch(ZONES_API, {
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      setZones(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Erro ao carregar zonas:", err);
-      alert("Falha ao carregar a lista de zonas.");
-    }
-  };
-
-  // ------------------------------
-  // SAVE POI (CREATE OR UPDATE)
-  // ------------------------------
+  // ----- SALVAR POI -----
   const savePoi = async (e) => {
     e.preventDefault();
 
-    const method = editingId ? "PUT" : "POST";
-    const url = editingId ? `${API}/${editingId}` : API;
-
     try {
-      const res = await fetch(url, {
-        method,
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        console.log(await res.text());
-        return alert("Erro ao guardar POI.");
+      if (editingId) {
+        await updatePoi({ id: editingId, body: form }).unwrap();
+      } else {
+        await createPoi(form).unwrap();
       }
 
       setForm({
@@ -124,44 +61,29 @@ export default function PoisPage() {
       });
 
       setEditingId(null);
-      loadPois();
     } catch (err) {
       console.error("Erro ao guardar POI:", err);
+      alert("Falha ao guardar POI.");
     }
   };
 
-  // ------------------------------
-  // DELETE POI
-  // ------------------------------
-  const deletePoi = async (id) => {
+  // ----- APAGAR -----
+  const handleDelete = async (id) => {
     if (!confirm("Tem a certeza que deseja apagar este POI?")) return;
-
     try {
-      const res = await fetch(`${API}/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) loadPois();
+      await deletePoi(id).unwrap();
     } catch (err) {
       console.error("Erro ao apagar POI:", err);
+      alert("Falha ao apagar POI.");
     }
   };
 
-  useEffect(() => {
-    loadCities();
-    loadZones();
-    loadPois();
-  }, []);
-
-  if (loading)
+  if (isLoading)
     return <p className="p-6 text-gray-600">A carregar POIs...</p>;
 
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto">
-
         {/* HEADER */}
         <div className="flex items-center gap-3 mb-6">
           <Link
@@ -249,7 +171,9 @@ export default function PoisPage() {
             placeholder="Título do conteúdo"
             className="border p-2 rounded col-span-1 md:col-span-2"
             value={form.content_title}
-            onChange={(e) => setForm({ ...form, content_title: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, content_title: e.target.value })
+            }
           />
 
           <textarea
@@ -330,7 +254,7 @@ export default function PoisPage() {
                         </button>
 
                         <button
-                          onClick={() => deletePoi(poi.id)}
+                          onClick={() => handleDelete(poi.id)}
                           className="text-red-600 hover:text-red-800"
                         >
                           Apagar
