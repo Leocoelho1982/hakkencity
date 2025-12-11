@@ -10,8 +10,6 @@ import coin from "../assets/coins.png";
 
 export default function WalletPage() {
   const navigate = useNavigate();
-
-  // 👉 pega o total real do backend
   const { data } = useGetCoinsTotalQuery();
   const totalCoins = data?.coins ?? 0;
 
@@ -19,101 +17,108 @@ export default function WalletPage() {
     <div
       className="
         min-h-screen w-full 
-        bg-gradient-to-b from-gold-20 to-gold-60 
+        bg-[url('/assets/parchment_texture.jpg')] bg-cover bg-center
         px-6 pb-16
-        flex flex-col items-center pt-16 relative
+        flex flex-col items-center pt-20 relative
       "
     >
+      {/* MOLDURA LATERAL */}
+      <div className="absolute inset-0 pointer-events-none bg-[url('/assets/frame.png')] bg-cover opacity-60"></div>
+
       {/* BOTÃO VOLTAR */}
       <button
         onClick={() => navigate("/map")}
         className="
-          absolute top-5 left-4
+          absolute top-5 left-4 z-50
           w-12 h-12 rounded-full
           bg-[#F8DCA0]
           border-[3px] border-[#8B5E3C]
           flex items-center justify-center
-          shadow-[0_3px_0px_#C89B4C]
+          shadow-[0_4px_0px_#C89B4C]
           hover:scale-110 transition
         "
       >
         <FiArrowLeft size={22} className="text-[#5A2C0A]" />
       </button>
 
-      {/* TÍTULO */}
-      <motion.h1
+      {/* TÍTULO EM FAIXA DE MADEIRA */}
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="
-          font-title text-3xl text-center text-[#5A2C0A]
-          bg-[#E9C27D]
-          px-8 py-3 rounded-xl
-          shadow-inner border-b-[3px] border-[#C89B4C]
+          bg-[url('/assets/wood_banner.png')] bg-cover bg-center
+          text-[#FFE6B3] font-title text-3xl
+          px-10 py-4 rounded-xl shadow-xl border-[3px] border-[#5A2C0A]
         "
       >
         Tesouro do Explorador
-      </motion.h1>
+      </motion.div>
 
-      {/* BAÚ CENTRAL */}
+      {/* BAÚ ANIMADO */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 120 }}
-        className="relative mt-8"
+        transition={{ type: 'spring', stiffness: 140 }}
+        className="relative mt-10 drop-shadow-2xl"
       >
-        <img
+        <motion.img
           src={chestImg}
-          alt="Cofre de Tesouro"
-          className="w-48 drop-shadow-xl"
+          alt="Cofre"
+          className="w-52"
+          animate={{ rotate: [0, -3, 3, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
 
-        {/* brilho animado */}
+        {/* Sparkle */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
+          initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1, rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-5 left-1/2 -translate-x-1/2 text-yellow-400"
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-6 left-1/2 -translate-x-1/2 text-yellow-300 drop-shadow-md"
         >
-          <FiStar size={40} />
+          <FiStar size={45} />
         </motion.div>
       </motion.div>
 
-      {/* CARD DE MOEDAS */}
+      {/* CARD DO TOTAL DE MOEDAS */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="
-          mt-8 px-10 py-4 rounded-3xl
-          bg-[#8B3A1A] text-white font-title text-4xl
-          shadow-xl flex items-center gap-4
-          border-[3px] border-[#5A2C0A]
+          mt-10 bg-gradient-to-b from-[#A14422] to-[#6B1F10]
+          border-[4px] border-[#3A0E05]
+          text-[#FFE9C8]
+          px-12 py-5 rounded-3xl shadow-2xl
+          font-title text-5xl flex items-center gap-4
         "
       >
-        <img src={coin} className="w-12 h-12 drop-shadow-md" alt="coins" />
+        <img src={coin} className="w-12 h-12 drop-shadow-xl" alt="coins" />
         {totalCoins}
       </motion.div>
 
-      <p className="text-marron-100 text-center mt-3 font-semibold">
+      <p className="text-marron-100 text-center mt-3 font-semibold drop-shadow-sm">
         Total acumulado das tuas aventuras!
       </p>
 
-      {/* HISTÓRICO */}
+      {/* HISTÓRICO COMO PERGAMINHO */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35 }}
         className="
-          w-full max-w-md bg-white mt-10 rounded-2xl
-          shadow-xl p-6 border-4 border-yellow-300
+          w-full max-w-md mt-12
+          bg-[url('/assets/parchment_block.png')] bg-cover bg-center
+          shadow-xl rounded-xl p-6 border-[3px] border-[#C8A45A]
         "
       >
-        <h2 className="text-lg font-bold text-marron-100 mb-3 flex items-center gap-2">
+        <h2 className="text-xl font-bold text-[#5A2C0A] mb-3 flex items-center gap-2">
           <FiTrendingUp /> Histórico de Recolhas
         </h2>
 
-        <p className="text-sm text-marron-80 italic">
-          Em breve vais poder ver cada tesouro conquistado, com datas e locais!
+        <p className="text-marron-80 text-sm italic leading-relaxed drop-shadow-sm">
+          Em breve vais poder ver todos os tesouros recolhidos,  
+          com datas, locais e recompensas!
         </p>
       </motion.div>
     </div>
