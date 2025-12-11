@@ -22,8 +22,8 @@ function calculateXp(coins, badges = 0) {
 function calculateLevel(xp) {
   let level = 1;
 
-  // XP para o próximo nível (base = 1000)
-  let next = 500;
+  // XP para o próximo nível (base = 200)
+  let next = 200;
 
   // Fator de crescimento (ex: +20% a cada nível)
   const growth = 1.2;
