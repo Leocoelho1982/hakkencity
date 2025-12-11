@@ -19,7 +19,6 @@ import { useGetPoisQuery } from "../features/poiApi";
 import { useCollectPoiMutation } from "../features/gameApi";
 
 
-
 // ---- Helper para buscar cidade/distrito via Nominatim ----
 async function getRegion(lat, lng) {
   const res = await fetch(
@@ -48,8 +47,8 @@ export default function MapPage() {
   const { position, msg } = useGeolocation();
   const { heading, hasPermission, requestPermission } = useHeading();
 
+  // Mutação de recolher POIs
   const [collectPoi] = useCollectPoiMutation();
-
 
 
   // -------- POIs (vindo do backend) --------
@@ -94,24 +93,37 @@ export default function MapPage() {
 
   // -------- Recolha de POIs --------
   async function handleCollect(poi) {
-  try {
-    // 1) ENVIA PARA O BACKEND
-    const res = await collectPoi(poi.id).unwrap();
+    try {
+      // 1) Envia recolha para o backend
+      const res = await collectPoi(poi.id).unwrap();
 
-    console.log("Resposta backend:", res);
+      /*
+        Backend retorna algo como:
+        {
+          message: "Moeda coletada",
+          coins: 1,
+          xp: 10,
+          level: 1,
+          poi: {...}
+        }
+      */
 
-    // 2) MARCA COMO VISITADO NO LOCALSTORAGE
-    if (!visited[poi.id]) {
-      setVisited((prev) => ({ ...prev, [poi.id]: true }));
-      setScore((prev) => prev + (poi.points || 0));
-      navigator.vibrate?.(80);
+      console.log("Resposta backend:", res);
+
+      // 2) Marca como visitado
+      if (!visited[poi.id]) {
+        setVisited((prev) => ({ ...prev, [poi.id]: true }));
+
+        // Atualiza SCORE com as moedas reais devolvidas pelo backend
+        setScore((prev) => prev + res.coins);
+
+        navigator.vibrate?.(80);
+      }
+
+    } catch (err) {
+      console.error("Erro ao recolher moeda no backend:", err);
     }
-
-  } catch (err) {
-    console.error("Erro ao recolher moeda no backend:", err);
   }
-}
-
 
 
   // Se os POIs ainda estão a carregar
@@ -174,7 +186,7 @@ export default function MapPage() {
                 lat: p.lat,
                 lng: p.lng,
                 radius: p.radius,
-                points: p.coins,                // conversão coins → points
+                points: p.coins, // valor configurado (não usado no score)
                 tags: p.tags?.split(",") || [],
                 content: {
                   title: p.content_title,
