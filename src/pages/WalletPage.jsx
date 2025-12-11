@@ -4,109 +4,98 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiStar, FiTrendingUp, FiMapPin } from "react-icons/fi";
 
-import { useGetCoinsTotalQuery, useGetCollectedPoisQuery } from "../features/poiApi";
-
-import chestImg from "../assets/mapicon.png";
-import coin from "../assets/coins.png";
+import {
+  useGetCoinsTotalQuery,
+  useGetCollectedPoisQuery,
+} from "../features/poiApi";
 
 export default function WalletPage() {
   const navigate = useNavigate();
 
-  // TOTAL GLOBAL DE MOEDAS
   const { data: coinsData } = useGetCoinsTotalQuery();
   const totalCoins = coinsData?.coins ?? 0;
 
-  // LISTA DE POIS RECOLHIDOS
   const { data: collectedData } = useGetCollectedPoisQuery();
-  const collected = collectedData?.details || []; 
-  // (vou assumir que vais devolver { details: [{id, name, coins, collectedAt}] })
+  const collected = collectedData?.details || [];
 
   return (
     <div
-      className="min-h-screen w-full bg-gradient-to-b from-yellow-100 to-yellow-300 
-                 px-6 pb-20 flex flex-col items-center pt-20 relative"
+      className="
+        min-h-screen w-full 
+        bg-gradient-to-b from-gold-20 to-gold-60
+        flex flex-col items-center px-6 pb-20 pt-20 relative
+      "
     >
-
-      {/* BOTÃO VOLTAR */}
+      {/* VOLTAR */}
       <button
         onClick={() => navigate("/map")}
-        className="absolute top-5 left-4 w-12 h-12 rounded-full
-                   bg-[#F8DCA0] border-[3px] border-[#8B5E3C]
-                   flex items-center justify-center
-                   shadow-[0_3px_0px_#C89B4C]
-                   hover:scale-110 transition"
+        className="
+          absolute top-5 left-4 w-12 h-12 rounded-full
+          bg-gold-60 border-[3px] border-marron-100
+          flex items-center justify-center
+          shadow-[0_3px_0px_var(--color-marron-100)]
+          hover:scale-110 transition
+        "
       >
-        <FiArrowLeft size={22} className="text-[#5A2C0A]" />
+        <FiArrowLeft size={22} className="text-marron-100" />
       </button>
 
-      {/* TÍTULO GAMIFICADO */}
+      {/* TÍTULO */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="
-          font-title text-3xl text-center text-[#5A2C0A]
-          bg-yellow-400 px-8 py-3 rounded-xl
-          shadow-inner border-b-[4px] border-yellow-600
+          font-title text-3xl text-center text-marron-100
+          bg-gold-100 px-10 py-3 rounded-xl
+          shadow-inner border-b-[4px] border-[#b29146]
         "
       >
         Tesouro do Explorador
       </motion.h1>
 
-      {/* BAÚ ANIMADO COM SPARKLE */}
+      {/* EMBLEMA / INSÍGNIA ANIMADA */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 130 }}
-        className="relative mt-10"
+        transition={{ type: "spring", stiffness: 110 }}
+        className="relative mt-10 flex items-center justify-center"
       >
-        <motion.img
-          src={chestImg}
-          alt="Cofre"
-          className="w-48 drop-shadow-xl"
-          animate={{ rotate: [0, -2, 2, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-        />
+        <div
+          className="
+            w-36 h-36 rounded-full 
+            bg-gradient-to-b from-[#fce9ab] to-[#f9c66a]
+            shadow-xl border-[6px] border-[#b29146]
+            flex items-center justify-center
+          "
+        >
+          <span className="font-title text-5xl text-marron-100">
+            {totalCoins}
+          </span>
+        </div>
 
-        {/* SPARKLE ANIMADO */}
+        {/* brilho animado */}
         <motion.div
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1, rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-4 left-1/2 -translate-x-1/2 text-yellow-500"
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-4 text-yellow-500"
         >
           <FiStar size={40} />
         </motion.div>
       </motion.div>
 
-      {/* QUADRO DO TOTAL DE MOEDAS */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="
-          mt-10 bg-gradient-to-b from-[#8B3A1A] to-[#5A1E0E]
-          border-[4px] border-[#3A0E05]
-          text-white font-title
-          px-12 py-5 rounded-3xl shadow-2xl 
-          text-5xl flex items-center gap-4
-        "
-      >
-        <img src={coin} className="w-12 h-12 drop-shadow-md" alt="moedas" />
-        {totalCoins}
-      </motion.div>
-
-      <p className="text-marron-100 text-center mt-3 font-semibold">
+      <p className="text-marron-100 text-center mt-4 font-semibold">
         Total acumulado das tuas aventuras!
       </p>
 
-      {/* HISTÓRICO DE RECOLHAS */}
+      {/* HISTÓRICO */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
+        transition={{ delay: 0.25 }}
         className="
           w-full max-w-md mt-12 bg-white rounded-2xl shadow-xl 
-          p-6 border-4 border-yellow-400
+          p-6 border-4 border-gold-60
         "
       >
         <h2 className="text-lg font-bold text-marron-100 mb-4 flex items-center gap-2">
@@ -118,12 +107,14 @@ export default function WalletPage() {
             Ainda não recolheste nenhum tesouro…
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {collected.map((item) => (
-              <div
+              <motion.div
                 key={item.id}
+                initial={{ opacity: 0, x: -15 }}
+                animate={{ opacity: 1, x: 0 }}
                 className="
-                  bg-yellow-100 rounded-xl p-4 border-[2px] border-yellow-400 
+                  bg-gold-40 rounded-xl p-4 border-[2px] border-gold-100
                   shadow-md flex justify-between items-center
                 "
               >
@@ -136,16 +127,14 @@ export default function WalletPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1 font-bold text-yellow-700">
-                  <img src={coin} className="w-6 h-6" />
-                  {item.coins}
+                <div className="font-bold text-marron-100 text-xl">
+                  +{item.coins}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
       </motion.div>
-
     </div>
   );
 }
