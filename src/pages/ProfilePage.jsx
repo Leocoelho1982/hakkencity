@@ -14,22 +14,31 @@ import { FiLogOut, FiArrowLeft, FiStar } from "react-icons/fi";
 import { motion } from "framer-motion";
 import avatarFallback from "../assets/avatar.jpg";
 
-// --- XP e Level ---
+/// --- XP e Level com progressão crescente ---
 function calculateXp(coins, badges = 0) {
   return coins * 3 + badges * 200;
 }
 
 function calculateLevel(xp) {
   let level = 1;
-  let next = 2000;
+
+  // XP para o próximo nível (base = 1000)
+  let next = 500;
+
+  // Fator de crescimento (ex: +20% a cada nível)
+  const growth = 1.2;
 
   while (xp >= next) {
-    level++;
     xp -= next;
-    next += 2000;
+    level++;
+
+    // Aumenta a dificuldade do próximo nível
+    next = Math.floor(next * growth); 
   }
+
   return level;
 }
+
 
 export default function ProfilePage() {
   const dispatch = useDispatch();
