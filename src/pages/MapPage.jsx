@@ -200,6 +200,7 @@ export default function MapPage() {
                 gpsMsg={msg}
                 avatar={avatar}
                 city={city}
+                level={2}
               />
             </div>
           </div>
