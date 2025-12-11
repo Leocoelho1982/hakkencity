@@ -1,18 +1,18 @@
 /* eslint-disable */
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Marker, Circle } from "react-leaflet";
 import { createPortal } from "react-dom";
 import L from "leaflet";
 import * as turf from "@turf/turf";
+
 import coinIcon from "../assets/coin.png";
 import coinsIcon from "../assets/coins.png";
 import ampliarIcon from "../assets/bt_ampliar.png";
 import iconClose from "../assets/bt_close.png";
+
 import EffectParticles from "../components/EffectParticles";
 import { coinSound } from "../utils/sound";
 
-
-// Criar ícone do POI
 function makeIcon(collected) {
   return L.icon({
     iconUrl: coinIcon,
@@ -21,21 +21,31 @@ function makeIcon(collected) {
   });
 }
 
-// Formatador
 function formatDistance(meters) {
   if (!meters) return "—";
   if (meters < 1000) return `${Math.round(meters)} m`;
   return `${(meters / 1000).toFixed(2)} km`;
 }
 
-export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }) {
+export default function PoiMarker({ poi, userPosition, visited = [], onCollect }) {
   const [open, setOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-
   const [showParticles, setShowParticles] = useState(false);
 
+  // -----------------------------------------
+  // ABRIR MODAL A PARTIR DE OUTRA PÁGINA
+  // -----------------------------------------
+  useEffect(() => {
+    function handleOpenModal(e) {
+      if (e.detail === poi.id) setOpen(true);
+    }
+    window.addEventListener("openPoiModal", handleOpenModal);
+    return () => window.removeEventListener("openPoiModal", handleOpenModal);
+  }, [poi.id]);
 
-  // Calcular distância
+  // -----------------------------------------
+  // DISTÂNCIA
+  // -----------------------------------------
   const distance = useMemo(() => {
     if (!userPosition) return null;
     const from = turf.point([userPosition.lng, userPosition.lat]);
@@ -43,24 +53,30 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
     return turf.distance(from, to, { units: "meters" });
   }, [userPosition, poi]);
 
-  const isCollected = Array.isArray(visited) && visited.includes(poi.id);
-
+  const isCollected = visited.includes(poi.id);
   const canCollect = !isCollected && distance !== null && distance <= poi.radius;
 
   // -----------------------------------------
-  // 🔔 BALÃO GAMIFICADO QUANDO ENTRA NO RAIO
+  // ALERTA DE PROXIMIDADE
   // -----------------------------------------
   const proximityAlert =
     canCollect &&
     createPortal(
-      <div className="fixed bottom-28 left-1/2 -translate-x-1/2 bg-yellow-300 text-marron-100 px-5 py-2 rounded-full shadow-xl z-[900] border-2 border-yellow-600 font-bold animate-bounce">
+      <div
+        className="
+          fixed bottom-28 left-1/2 -translate-x-1/2
+          bg-gold-60 text-marron-100
+          px-5 py-2 rounded-full shadow-xl z-[900]
+          border-2 border-gold-80 font-bold animate-bounce
+        "
+      >
         🎉 Estás no raio do POI! Toca no marcador para recolher moedas!
       </div>,
       document.body
     );
 
   // -----------------------------------------
-  // 🎨 MODAL ESTILO AVENTURA / PERGAMINHO
+  // MODAL DO POI — TOTALMENTE CONSISTENTE
   // -----------------------------------------
   const modal = open
     ? createPortal(
@@ -69,7 +85,11 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-gradient-to-b from-[#FFF2CC] to-[#F2C97D] rounded-3xl p-6 w-xl m-4 border-[6px] border-[#8B5E3C] shadow-2xl relative my-10 max-h-[90vh] overflow-y-auto"
+            className="
+              bg-gradient-to-b from-gold-20 to-gold-60
+              rounded-3xl p-6 w-xl m-4 border-[6px] border-marron-100
+              shadow-2xl relative my-10 max-h-[90vh] overflow-y-auto
+            "
             onClick={(e) => e.stopPropagation()}
           >
             {/* Fechar */}
@@ -80,58 +100,79 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
               <img src={iconClose} className="h-7 w-7" alt="Fechar" />
             </button>
 
-            {/* Título gamificado */}
-            <h3 className="font-title text-2xl mb-4 text-[#5A2C0A] text-center bg-[#E9C27D] py-2 rounded-xl shadow-inner border-b-[3px] border-[#C89B4C]">
+            {/* TÍTULO */}
+            <h3
+              className="
+                font-title text-2xl mb-4 text-marron-100 text-center
+                bg-gold-80 py-2 rounded-xl shadow-inner
+                border-b-[4px] border-gold-100
+              "
+            >
               {poi.content?.title || poi.name}
             </h3>
 
-            {/* Imagem + Ícones */}
+            {/* IMAGEM DO POI */}
             {poi.content?.image && (
               <div className="relative mb-4">
                 <img
                   src={poi.content.image}
                   alt={poi.name}
-                  className="w-full h-48 object-cover rounded-xl border-[4px] border-[#C9A45C] shadow-xl"
+                  className="
+                    w-full h-48 object-cover rounded-xl
+                    border-[4px] border-gold-100 shadow-xl
+                  "
                 />
 
-                {/* Pontos */}
-                <div className="absolute top-3 left-3 flex items-center bg-white/80 rounded-full px-3 py-1 shadow-md border border-[#E6A84C]">
+                {/* MOEDAS */}
+                <div
+                  className="
+                    absolute top-3 left-3 flex items-center
+                    bg-white/80 rounded-full px-3 py-1 shadow-md
+                    border border-gold-80
+                  "
+                >
                   <img src={coinsIcon} alt="" className="w-6 h-6 mr-1" />
-                  <span className="font-extrabold text-[#5A2C0A] text-lg">
+                  <span className="font-extrabold text-marron-100 text-lg">
                     {poi.points}
                   </span>
                 </div>
 
-                {/* Ampliar */}
+                {/* AMPLIAR */}
                 <button
                   onClick={() => setLightboxOpen(true)}
-                  className="absolute top-3 right-3 bg-white/80 rounded-full p-2 shadow-md hover:scale-110 transition"
+                  className="
+                    absolute top-3 right-3 bg-white/80
+                    rounded-full p-2 shadow-md hover:scale-110 transition
+                  "
                 >
                   <img src={ampliarIcon} alt="Ampliar" className="w-6 h-6" />
                 </button>
               </div>
             )}
 
-            {/* Descrição */}
-            <p className="text-sm text-[#5A3B14] mb-4 leading-relaxed">
+            {/* DESCRIÇÃO */}
+            <p className="text-sm text-marron-80 mb-4 leading-relaxed">
               {poi.content?.text}
             </p>
 
-            {/* Barra de distância */}
+            {/* DISTÂNCIA */}
             <div className="my-4">
-              <p className="text-center text-sm font-semibold text-[#4B2D0F] mb-1">
+              <p className="text-center text-sm font-semibold text-marron-80 mb-1">
                 Distância até ao POI
               </p>
 
-              <div className="w-full bg-[#f4e2b8] rounded-full h-4 overflow-hidden">
+              <div className="w-full bg-gold-40 rounded-full h-4 overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-500 ${
-                    canCollect
-                      ? "bg-green-500"
-                      : distance < 200
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
-                  }`}
+                  className={`
+                    h-full transition-all duration-500
+                    ${
+                      canCollect
+                        ? "bg-green-500"
+                        : distance < 200
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
+                    }
+                  `}
                   style={{
                     width: `${Math.min(
                       100,
@@ -141,31 +182,34 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
                 />
               </div>
 
-              <p className="text-center mt-1 text-sm text-[#7A4A1F]">
+              <p className="text-center mt-1 text-sm text-marron-80">
                 {formatDistance(distance)}
               </p>
             </div>
 
-            {/* BOTÃO GAMIFICADO */}
+            {/* BOTÃO DE RECOLHA */}
             {canCollect ? (
               <button
                 onClick={() => {
-                  coinSound.play();       // 🔊 som
-                  setShowParticles(true); // 🎉 partículas
+                  coinSound.play();
+                  setShowParticles(true);
                   onCollect(poi);
                   setOpen(false);
                 }}
-                className="w-full bg-gradient-to-b from-[#FFB75E] to-[#E67826] text-white py-3 rounded-full font-title text-xl shadow-xl mt-4 animate-pulse hover:scale-105 transition"
+                className="
+                  w-full bg-gradient-to-b from-[#FFB75E] to-[#E67826]
+                  text-white py-3 rounded-full font-title text-xl
+                  shadow-xl mt-4 animate-pulse hover:scale-105 transition
+                "
               >
                 ✨ Recolher Moedas!
               </button>
-
             ) : (
-              <p className="text-center text-sm text-[#7A4A1F] mt-4 italic">
+              <p className="text-center text-sm text-marron-80 mt-4 italic">
                 {isCollected
                   ? "✅ Já recolhido"
                   : distance < 200
-                  ? "🔎 Estás muito perto! Continua!"
+                  ? "🔎 Estás muito perto!"
                   : "🚶 Aproxima-te para recolher"}
               </p>
             )}
@@ -213,7 +257,7 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
         center={{ lat: poi.lat, lng: poi.lng }}
         radius={poi.radius}
         pathOptions={{
-          color: isCollected ? "gray" : "#e68d2f",
+          color: isCollected ? "gray" : "var(--color-gold-100)",
           fillOpacity: 0.15,
         }}
       />
@@ -226,15 +270,13 @@ export default function PoiMarker({ poi, userPosition, visited = {}, onCollect }
         eventHandlers={{ click: () => setOpen(true) }}
       />
 
-      {/* Portais */}
       {modal}
       {lightbox}
       {proximityAlert}
 
       {showParticles && (
-  <EffectParticles onComplete={() => setShowParticles(false)} />
-)}
-
+        <EffectParticles onComplete={() => setShowParticles(false)} />
+      )}
     </>
   );
 }

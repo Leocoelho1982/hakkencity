@@ -34,7 +34,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city, l
             <div
               className="
                 absolute -top-3 -right-3
-                w-10 h-10 rounded-full 
+                w-8 h-8 rounded-full 
                 bg-gold-100 border-[3px] border-marron-100
                 flex items-center justify-center 
                 font-title text-marron-100 text-lg 
