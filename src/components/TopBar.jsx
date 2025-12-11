@@ -13,7 +13,7 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city, l
   return (
     <div className="relative w-full z-50">
       {/* FUNDO DA BARRA */}
-      <div className="bg-gold-20 p-2 rounded-b-3xl border-b-[4px] border-marron-100 shadow-lg">
+      
 
         {/* CONTENT */}
         <div className="
@@ -124,13 +124,8 @@ export default function TopBar({ score, visitedCount, totalPois, avatar, city, l
           </button>
         </div>
 
-        {/* ------------------------- */}
-        {/* TITULO DE LOCALIZAÇÃO     */}
-        {/* ------------------------- */}
-        <div className="text-center font-title text-marron-100 mt-1">
-          Localização: {city || "—"}
-        </div>
-      </div>
+        
+      
     </div>
   );
 }
