@@ -82,7 +82,7 @@ export default function POIProgressPage() {
         <FiArrowLeft size={22} className="text-marron-100" />
       </button>
 
-      {/* TÍTULO (MESMO DO WALLET) */}
+      {/* TÍTULO — PADRÃO WALLET/PROFILE */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -150,9 +150,17 @@ export default function POIProgressPage() {
                   {zone.pois.map((poi) => (
                     <div
                       key={poi.id}
+                      onClick={() => {
+                        // 🔥 ABRIR MODAL GLOBAL DO POI
+                        const event = new CustomEvent("openPoiModal", {
+                          detail: poi.id,
+                        });
+                        window.dispatchEvent(event);
+                      }}
                       className="
                         bg-gold-20 border-[2px] border-gold-60
                         rounded-xl p-3 shadow-md flex items-center gap-3
+                        cursor-pointer hover:scale-[1.02] transition
                       "
                     >
                       <FiMapPin size={22} className="text-marron-100" />
@@ -166,7 +174,7 @@ export default function POIProgressPage() {
                         </p>
                       </div>
 
-                      {/* ÍCONES GAMIFICADOS — CONSISTENTES */}
+                      {/* ÍCONES GAMIFICADOS */}
                       {poi.visited ? (
                         <FiStar
                           size={26}
