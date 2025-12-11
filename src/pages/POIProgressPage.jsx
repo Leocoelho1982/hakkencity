@@ -1,19 +1,73 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiArrowLeft, FiChevronDown, FiChevronUp, FiMapPin } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiChevronDown,
+  FiChevronUp,
+  FiMapPin
+} from "react-icons/fi";
 
-export default function POIProgressPage({ zones = [] }) {
+import {
+  useGetPoisQuery,
+  useGetCollectedPoisQuery
+} from "../features/poiApi";
+
+import { PuffLoader } from "react-spinners";
+
+export default function POIProgressPage() {
   const navigate = useNavigate();
 
-  // Estado para expandir/fechar zonas
+  // --- FETCH VIA REDUX ---
+  const { data: poisData, isLoading: loadingPois } = useGetPoisQuery();
+  const { data: collectedData, isLoading: loadingCollected } =
+    useGetCollectedPoisQuery();
+
+  const collected = collectedData?.collected || [];
+
   const [openZone, setOpenZone] = useState(null);
 
-  // Função alternar zona
   const toggleZone = (zone) => {
     setOpenZone(openZone === zone ? null : zone);
   };
+
+  // ------------------------------------------------------
+  // AGRUPAR POIs POR ZONA + IDENTIFICAR VISITADOS
+  // ------------------------------------------------------
+  const zones = useMemo(() => {
+    if (!poisData) return [];
+
+    const groups = {};
+
+    poisData.forEach((poi) => {
+      const zoneName = poi.Zone?.name || "Zona Desconhecida";
+
+      if (!groups[zoneName]) groups[zoneName] = [];
+
+      groups[zoneName].push({
+        id: poi.id,
+        name: poi.name,
+        visited: collected.includes(poi.id),
+      });
+    });
+
+    return Object.entries(groups).map(([zoneName, pois]) => ({
+      name: zoneName,
+      pois,
+    }));
+  }, [poisData, collected]);
+
+  // ------------------------------------------------------
+  // LOADING
+  // ------------------------------------------------------
+  if (loadingPois || loadingCollected) {
+    return (
+       <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
+        <PuffLoader color="#8B3A1A" size={80} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-gold-20 to-gold-60 p-6 pt-16">
@@ -35,7 +89,7 @@ export default function POIProgressPage({ zones = [] }) {
         <FiArrowLeft size={20} className="text-[#5A2C0A]" />
       </button>
 
-      {/* TÍTULO IGUAL AO WALLET */}
+      {/* TÍTULO */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -51,7 +105,7 @@ export default function POIProgressPage({ zones = [] }) {
         Progresso dos POIs por Zona
       </motion.div>
 
-      {/* LISTA DAS ZONAS */}
+      {/* LISTA DE ZONAS */}
       <div className="max-w-lg mx-auto space-y-5">
         {zones.map((zone, index) => {
           const visited = zone.pois.filter((p) => p.visited).length;
@@ -69,7 +123,7 @@ export default function POIProgressPage({ zones = [] }) {
                 shadow-xl p-5 relative
               "
             >
-              {/* HEADER DA ZONA */}
+              {/* HEADER */}
               <button
                 className="w-full flex justify-between items-center"
                 onClick={() => toggleZone(zone.name)}
@@ -90,7 +144,7 @@ export default function POIProgressPage({ zones = [] }) {
                 )}
               </button>
 
-              {/* BARRA DE PROGRESSO – IGUAL AO ESTILO DO WALLET */}
+              {/* PROGRESS BAR */}
               <div className="mt-3 w-full bg-[#f4e2b8] h-4 rounded-full overflow-hidden shadow-inner">
                 <div
                   className="h-full bg-[#8B3A1A] transition-all"
@@ -98,7 +152,7 @@ export default function POIProgressPage({ zones = [] }) {
                 ></div>
               </div>
 
-              {/* LISTA DOS POIs */}
+              {/* LISTA DE POIs */}
               {openZone === zone.name && (
                 <div className="mt-4 space-y-3">
                   {zone.pois.map((poi) => (
@@ -120,11 +174,15 @@ export default function POIProgressPage({ zones = [] }) {
                         </p>
                       </div>
 
-                      {poi.visited ? (
-                        <span className="text-green-700 font-bold">✔</span>
-                      ) : (
-                        <span className="text-red-600 font-bold">•</span>
-                      )}
+                      <span
+                        className={
+                          poi.visited
+                            ? "text-green-700 font-bold"
+                            : "text-red-600 font-bold"
+                        }
+                      >
+                        {poi.visited ? "✔" : "•"}
+                      </span>
                     </div>
                   ))}
                 </div>
