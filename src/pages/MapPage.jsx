@@ -15,7 +15,7 @@ import LeaderboardButton from "../components/LeaderboardButton";
 import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 
-import { useGetPoisQuery, useGetCoinsTotalQuery } from "../features/poiApi";
+import { useGetPoisQuery, useGetCoinsTotalQuery, useGetCollectedPoisQuery } from "../features/poiApi";
 import { useCollectPoiMutation } from "../features/gameApi";
 
 // ---- Helper para buscar cidade/distrito via Nominatim ----
@@ -44,6 +44,10 @@ export default function MapPage() {
   // ---- TOTAL GLOBAL DE MOEDAS ----
   const { data: coinsData, refetch: refetchCoins } = useGetCoinsTotalQuery();
   const totalCoins = coinsData?.coins ?? 0;
+
+  const { data: collectedData } = useGetCollectedPoisQuery();
+  const collected = collectedData?.collected || [];
+
 
   // ---- GEO + HEADING ----
   const { position, msg } = useGeolocation();
@@ -174,7 +178,7 @@ export default function MapPage() {
                   key={poi.id}
                   poi={poi}
                   userPosition={position}
-                  visited={visited}
+                  visited={collected}
                   onCollect={handleCollect}
                 />
               );

@@ -14,6 +14,11 @@ export const poiApi = createApi({
       query: () => "/pois",
     }),
 
+    getCollectedPois: builder.query({
+    query: () => "/pois/collected",
+    }),
+
+
     // TOTAL DE MOEDAS (soma dos coins de POIs recolhidos)
     getCoinsTotal: builder.query({
       query: () => "/pois/coins/total",
@@ -21,4 +26,4 @@ export const poiApi = createApi({
   }),
 });
 
-export const { useGetPoisQuery, useGetCoinsTotalQuery } = poiApi;
+export const { useGetPoisQuery, useGetCollectedPoisQuery, useGetCoinsTotalQuery } = poiApi;
