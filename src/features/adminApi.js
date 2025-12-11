@@ -5,7 +5,7 @@ export const adminApi = createApi({
 
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.hakkencity.com/api",
-    credentials: "include", // envia cookies em todas as requests
+    credentials: "include",
   }),
 
   endpoints: (builder) => ({
@@ -15,7 +15,7 @@ export const adminApi = createApi({
         url: "/admin/login",
         method: "POST",
         body,
-        credentials: "include", // garante que cookie httpOnly é recebido
+        credentials: "include",
       }),
     }),
 
@@ -28,25 +28,39 @@ export const adminApi = createApi({
       }),
     }),
 
+    // VALIDAR SESSÃO
     adminSession: builder.query({
-      query: () => "/admin/me",
+      query: () => ({
+        url: "/admin/me",
+        credentials: "include",
+      }),
     }),
 
     // ESTATÍSTICAS
     getCitiesCount: builder.query({
-      query: () => "/cities/count",
+      query: () => ({
+        url: "/cities/count",
+        credentials: "include",
+      }),
     }),
 
     getZonesCount: builder.query({
-      query: () => "/zones/count",
+      query: () => ({
+        url: "/zones/count",
+        credentials: "include",
+      }),
     }),
 
     getPoisCount: builder.query({
-      query: () => "/pois/count",
+      query: () => ({
+        url: "/pois/count",
+        credentials: "include",
+      }),
     }),
   }),
 });
 
+// ⬇️ EXPORTS CORRETOS
 export const {
   useAdminLoginMutation,
   useAdminLogoutMutation,
