@@ -19,11 +19,14 @@ export default function ZonePage() {
   const CITIES_API = "https://api.hakkencity.com/api/cities";
   const token = localStorage.getItem("adminToken");
 
-  // Load Zones
+  // ------------------------------
+  // LOAD ZONES
+  // ------------------------------
   const loadZones = async () => {
     setLoading(true);
     try {
       const res = await fetch(API, {
+        credentials: "include",
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -36,10 +39,13 @@ export default function ZonePage() {
     setLoading(false);
   };
 
-  // Load Cities (para a dropdown)
+  // ------------------------------
+  // LOAD CITIES
+  // ------------------------------
   const loadCities = async () => {
     try {
       const res = await fetch(CITIES_API, {
+        credentials: "include",
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -47,11 +53,13 @@ export default function ZonePage() {
       setCities(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Erro ao carregar cidades:", err);
-      alert("Falha ao carregar lista de cidades.");
+      alert("Falha ao carregar a lista de cidades.");
     }
   };
 
-  // Save Zone (Create or Update)
+  // ------------------------------
+  // CREATE OR UPDATE ZONE
+  // ------------------------------
   const saveZone = async (e) => {
     e.preventDefault();
 
@@ -61,6 +69,7 @@ export default function ZonePage() {
     try {
       const res = await fetch(url, {
         method,
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -68,7 +77,10 @@ export default function ZonePage() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) return alert("Erro ao guardar zona.");
+      if (!res.ok) {
+        console.log(await res.text());
+        return alert("Erro ao guardar zona.");
+      }
 
       setForm({ name: "", description: "", cityId: "" });
       setEditingId(null);
@@ -78,13 +90,16 @@ export default function ZonePage() {
     }
   };
 
-  // Delete Zone
+  // ------------------------------
+  // DELETE ZONE
+  // ------------------------------
   const deleteZone = async (id) => {
     if (!confirm("Tem a certeza que deseja apagar esta zona?")) return;
 
     try {
       const res = await fetch(`${API}/${id}`, {
         method: "DELETE",
+        credentials: "include",
         headers: { Authorization: `Bearer ${token}` },
       });
 
