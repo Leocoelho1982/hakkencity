@@ -15,6 +15,8 @@ import LeaderboardButton from "../components/LeaderboardButton";
 import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 
+import { PuffLoader } from "react-spinners";
+
 import { useGetPoisQuery, useGetCoinsTotalQuery, useGetCollectedPoisQuery } from "../features/poiApi";
 import { useCollectPoiMutation } from "../features/gameApi";
 
@@ -110,7 +112,10 @@ export default function MapPage() {
 
   // Loader de POIs
   if (poisLoading) {
-    return <div className="text-center mt-10">A carregar POIs…</div>;
+    return <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gold-20 to-gold-60">
+        <PuffLoader color="#8B3A1A" size={80} />
+         <p className="mt-3 text-marron-100">A carregar POIs…</p>
+      </div>;
   }
 
   if (poisError) {
