@@ -15,9 +15,8 @@ import LeaderboardButton from "../components/LeaderboardButton";
 import useGeolocation from "../hooks/useGeolocation";
 import useHeading from "../hooks/useHeading";
 
-import { useGetPoisQuery } from "../features/poiApi";
+import { useGetPoisQuery, useGetCoinsTotalQuery } from "../features/poiApi";
 import { useCollectPoiMutation } from "../features/gameApi";
-
 
 // ---- Helper para buscar cidade/distrito via Nominatim ----
 async function getRegion(lat, lng) {
@@ -42,27 +41,29 @@ export default function MapPage() {
   if (loading) return <div className="text-center mt-10">A carregar…</div>;
   if (!isAuthenticated) return null;
 
+  // ---- TOTAL GLOBAL DE MOEDAS ----
+  const { data: coinsData, refetch: refetchCoins } = useGetCoinsTotalQuery();
+  const totalCoins = coinsData?.coins ?? 0;
 
-  // -------- GEO + HEADING --------
+  // ---- GEO + HEADING ----
   const { position, msg } = useGeolocation();
   const { heading, hasPermission, requestPermission } = useHeading();
 
-  // Mutação de recolher POIs
   const [collectPoi] = useCollectPoiMutation();
 
-
-  // -------- POIs (vindo do backend) --------
+  // ---- POIs do backend ----
   const {
     data: pois = [],
     isLoading: poisLoading,
     error: poisError,
   } = useGetPoisQuery();
 
-  // -------- Região (cidade/distrito) --------
+  // ---- Região (cidade/distrito) ----
   const [city, setCity] = useState("—");
 
   useEffect(() => {
     if (!position?.lat || !position?.lng) return;
+
     (async () => {
       try {
         const region = await getRegion(position.lat, position.lng);
@@ -73,49 +74,27 @@ export default function MapPage() {
     })();
   }, [position]);
 
-
-  // -------- Progresso local (visited + score) --------
+  // ---- Progresso local (visited) ----
   const [visited, setVisited] = useState(() =>
     JSON.parse(localStorage.getItem("visited") || "{}")
-  );
-  const [score, setScore] = useState(() =>
-    Number(localStorage.getItem("score") || 0)
   );
 
   useEffect(() => {
     localStorage.setItem("visited", JSON.stringify(visited));
   }, [visited]);
 
-  useEffect(() => {
-    localStorage.setItem("score", String(score));
-  }, [score]);
-
-
-  // -------- Recolha de POIs --------
+  // ---- Recolha de POIs ----
   async function handleCollect(poi) {
     try {
-      // 1) Envia recolha para o backend
       const res = await collectPoi(poi.id).unwrap();
-
-      /*
-        Backend retorna algo como:
-        {
-          message: "Moeda coletada",
-          coins: 1,
-          xp: 10,
-          level: 1,
-          poi: {...}
-        }
-      */
 
       console.log("Resposta backend:", res);
 
-      // 2) Marca como visitado
       if (!visited[poi.id]) {
         setVisited((prev) => ({ ...prev, [poi.id]: true }));
 
-        // Atualiza SCORE com as moedas reais devolvidas pelo backend
-        setScore((prev) => prev + res.coins);
+        // 👉 Atualiza total de moedas imediatamente
+        await refetchCoins();
 
         navigator.vibrate?.(80);
       }
@@ -125,13 +104,11 @@ export default function MapPage() {
     }
   }
 
-
-  // Se os POIs ainda estão a carregar
+  // Loader de POIs
   if (poisLoading) {
     return <div className="text-center mt-10">A carregar POIs…</div>;
   }
 
-  // Em caso de erro
   if (poisError) {
     return (
       <div className="text-center mt-10 text-red-600">
@@ -139,7 +116,6 @@ export default function MapPage() {
       </div>
     );
   }
-
 
   return (
     <div
@@ -168,7 +144,6 @@ export default function MapPage() {
             <PlayerHeadingCone position={position} heading={heading} />
             <PlayerMarker position={position} />
 
-
             {/* CONTROLOS */}
             <CompassControl
               heading={heading}
@@ -178,15 +153,14 @@ export default function MapPage() {
             <CenterOnMe position={position} />
             <LeaderboardButton />
 
-
-            {/* POIs DO BACKEND */}
+            {/* POIs */}
             {pois.map((p) => {
               const poi = {
                 id: p.id,
                 lat: p.lat,
                 lng: p.lng,
                 radius: p.radius,
-                points: p.coins, // valor configurado (não usado no score)
+                points: p.coins,
                 tags: p.tags?.split(",") || [],
                 content: {
                   title: p.content_title,
@@ -207,12 +181,11 @@ export default function MapPage() {
             })}
           </MapContainer>
 
-
           {/* TOP BAR */}
           <div className="fixed top-0 w-full max-w-4xl z-50 pointer-events-none">
             <div className="pointer-events-auto">
               <TopBar
-                score={score}
+                score={totalCoins}
                 visitedCount={Object.values(visited).filter(Boolean).length}
                 totalPois={pois.length}
                 gpsMsg={msg}
